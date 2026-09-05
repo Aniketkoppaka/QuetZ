@@ -1,0 +1,27 @@
+{
+  "run_id": "run_20260904_174600_cdd7b6",
+  "timestamp": "2026-09-04T17:46:00.519772+00:00",
+  "environment": {
+    "python_version": "3.11.5",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "os_name": "nt",
+    "git_version": "git version 2.49.0.windows.1",
+    "pytest_version": "9.1.1",
+    "network_available": false,
+    "llm_provider": "openai-compatible",
+    "llm_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "llm_credentials_available": true,
+    "evaluation_mode_default": "live"
+  },
+  "provider_config": {
+    "provider_name": "openai-compatible",
+    "api_base_url": "https://openrouter.ai/api/v1",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "api_key": "[REDACTED]",
+    "timeout_seconds": 60.0,
+    "max_tokens": "[REDACTED]",
+    "temperature": 0.0,
+    "retry_limit": 3,
+    "has_credentials": true
+  }
+}

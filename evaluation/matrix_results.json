@@ -1,0 +1,349 @@
+[
+  {
+    "case_id": "REAL-CLICK-01",
+    "repository": "pallets/click",
+    "parent_commit_sha": "9c4dfdaebe0e6b2aabc566eb81f6f10eb5cd6ea1",
+    "reference_commit_sha": "8b44edfff7d9a6c895fa804148c16b3a0bc9efb5",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "SKIPPED",
+    "reference_fetch": "PASS",
+    "reference_checkout": "NOT_RUN",
+    "reproduction_on_reference": "NOT_RUN",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "historical_environment_required",
+    "expected_affected_files": [
+      "src/click/_termui_impl.py"
+    ],
+    "actual_affected_files": [
+      "CHANGES.md",
+      "src/click/_termui_impl.py",
+      "tests/test_termui.py"
+    ],
+    "test_command": "pytest tests/test_termui.py -k test_tempfile_pager_accepts_text",
+    "parent_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-CLICK-01\\repo\nconfigfile: pyproject.toml\ncollected 248 items / 246 deselected / 2 selected\n\ntests\\test_termui.py ss                                                  [100%]\n\n===================== 2 skipped, 246 deselected in 0.17s ======================",
+    "reference_test_output": "",
+    "diagnostics": "Test skipped due to host environment constraint (requires POSIX / Linux container).",
+    "duration_seconds": 185.22
+  },
+  {
+    "case_id": "REAL-CLICK-02",
+    "repository": "pallets/click",
+    "parent_commit_sha": "3cbcf9b11546f4cf10b36d3e2e531733ba6fe001",
+    "reference_commit_sha": "4295457ddc7b5ca9a733d59ca40d9651b02b9b1d",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "FAIL",
+    "reference_fetch": "PASS",
+    "reference_checkout": "PASS",
+    "reproduction_on_reference": "PASS",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "ground_truth_verified",
+    "expected_affected_files": [
+      "src/click/_utils.py"
+    ],
+    "actual_affected_files": [
+      "CHANGES.md",
+      "src/click/_utils.py",
+      "tests/test_utils/test_sentinel.py"
+    ],
+    "test_command": "pytest tests/test_utils/test_sentinel.py -k test_sentinel_duplication_preserves_identity",
+    "parent_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-CLICK-02\\repo\nconfigfile: pyproject.toml\ncollected 10 items / 4 deselected / 6 selected\n\ntests\\test_utils\\test_sentinel.py ....FF                                 [100%]\n\n================================== FAILURES ===================================\n_____ test_sentinel_duplication_preserves_identity[pickle-Sentinel.UNSET] _____\n\nsentinel = Sentinel.UNSET, duplicate = <function <lambda> at 0x00000294D1265D00>\n\n    @pytest.mark.parametrize(\"sentinel\", tuple(Sentinel))\n    @pytest.mark.parametrize(\n        \"duplicate\",\n        (\n            copy.copy,\n            copy.deepcopy,\n            lambda value: pickle.loads(pickle.dumps(value)),\n        ),\n        ids=(\"copy\", \"deepcopy\", \"pickle\"),\n    )\n    def test_sentinel_duplication_preserves_identity(sentinel, duplicate):\n        \"\"\"Sentinels are singletons: copying or pickling one returns the member.\n    \n        The default ``Enum`` reduction is ``(cls, (member.value,))``, which cannot\n        round-trip a bare ``object()`` value: the copy or the unpickled value is a\n        new object and ``Sentinel()`` rejects it.\n        \"\"\"\n>       assert duplicate(sentinel) is sentinel\n               ^^^^^^^^^^^^^^^^^^^\n\ntests\\test_utils\\test_sentinel.py:78: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\ntests\\test_utils\\test_sentinel.py:67: in <lambda>\n    lambda value: pickle.loads(pickle.dumps(value)),\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nC:\\Python311\\Lib\\enum.py:712: in __call__\n    return cls.__new__(cls, value)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncls = <enum 'Sentinel'>, value = <object object at 0x00000294CDB163B0>\n\n    def __new__(cls, value):\n        # all enum instances are actually created during class construction\n        # without calling this method; this method is called by the metaclass'\n        # __call__ (i.e. Color(3) ), and by pickle\n        if type(value) is cls:\n            # For lookups like Color(Color.RED)\n            return value\n        # by-value search for a matching enum member\n        # see if it's in the reverse mapping (for hashable values)\n        try:\n            return cls._value2member_map_[value]\n        except KeyError:\n            # Not found, no need to do long O(n) search\n            pass\n        except TypeError:\n            # not there, now do long search -- O(n) behavior\n            for member in cls._member_map_.values():\n                if member._value_ == value:\n                    return member\n        # still not found -- try _missing_ hook\n        try:\n            exc = None\n            result = cls._missing_(value)\n        except Exception as e:\n            exc = e\n            result = None\n        try:\n            if isinstance(result, cls):\n                return result\n            elif (\n                    Flag is not None and issubclass(cls, Flag)\n                    and cls._boundary_ is EJECT and isinstance(result, int)\n                ):\n                return result\n            else:\n                ve_exc = ValueError(\"%r is not a valid %s\" % (value, cls.__qualname__))\n                if result is None and exc is None:\n>                   raise ve_exc\nE                   ValueError: <object object at 0x00000294CDB163B0> is not a valid Sentinel\n\nC:\\Python311\\Lib\\enum.py:1128: ValueError\n_ test_sentinel_duplication_preserves_identity[pickle-Sentinel.FLAG_NEEDS_VALUE] _\n\nsentinel = Sentinel.FLAG_NEEDS_VALUE\nduplicate = <function <lambda> at 0x00000294D1265D00>\n\n    @pytest.mark.parametrize(\"sentinel\", tuple(Sentinel))\n    @pytest.mark.parametrize(\n        \"duplicate\",\n        (\n            copy.copy,\n            copy.deepcopy,\n            lambda value: pickle.loads(pickle.dumps(value)),\n        ),\n        ids=(\"copy\", \"deepcopy\", \"pickle\"),\n    )\n    def test_sentinel_duplication_preserves_identity(sentinel, duplicate):\n        \"\"\"Sentinels are singletons: copying or pickling one returns the member.\n    \n        The default ``Enum`` reduction is ``(cls, (member.value,))``, which cannot\n        round-trip a bare ``object()`` value: the copy or the unpickled value is a\n        new object and ``Sentinel()`` rejects it.\n        \"\"\"\n>       assert duplicate(sentinel) is sentinel\n               ^^^^^^^^^^^^^^^^^^^\n\ntests\\test_utils\\test_sentinel.py:78: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\ntests\\test_utils\\test_sentinel.py:67: in <lambda>\n    lambda value: pickle.loads(pickle.dumps(value)),\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nC:\\Python311\\Lib\\enum.py:712: in __call__\n    return cls.__new__(cls, value)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncls = <enum 'Sentinel'>, value = <object object at 0x00000294CDB15AE0>\n\n    def __new__(cls, value):\n        # all enum instances are actually created during class construction\n        # without calling this method; this method is called by the metaclass'\n        # __call__ (i.e. Color(3) ), and by pickle\n        if type(value) is cls:\n            # For lookups like Color(Color.RED)\n            return value\n        # by-value search for a matching enum member\n        # see if it's in the reverse mapping (for hashable values)\n        try:\n            return cls._value2member_map_[value]\n        except KeyError:\n            # Not found, no need to do long O(n) search\n            pass\n        except TypeError:\n            # not there, now do long search -- O(n) behavior\n            for member in cls._member_map_.values():\n                if member._value_ == value:\n                    return member\n        # still not found -- try _missing_ hook\n        try:\n            exc = None\n            result = cls._missing_(value)\n        except Exception as e:\n            exc = e\n            result = None\n        try:\n            if isinstance(result, cls):\n                return result\n            elif (\n                    Flag is not None and issubclass(cls, Flag)\n                    and cls._boundary_ is EJECT and isinstance(result, int)\n                ):\n                return result\n            else:\n                ve_exc = ValueError(\"%r is not a valid %s\" % (value, cls.__qualname__))\n                if result is None and exc is None:\n>                   raise ve_exc\nE                   ValueError: <object object at 0x00000294CDB15AE0> is not a valid Sentinel\n\nC:\\Python311\\Lib\\enum.py:1128: ValueError\n=========================== short test summary info ===========================\nFAILED tests/test_utils/test_sentinel.py::test_sentinel_duplication_preserves_identity[pickle-Sentinel.UNSET]\nFAILED tests/test_utils/test_sentinel.py::test_sentinel_duplication_preserves_identity[pickle-Sentinel.FLAG_NEEDS_VALUE]\n================== 2 failed, 4 passed, 4 deselected in 0.15s ==================",
+    "reference_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-CLICK-02\\repo\nconfigfile: pyproject.toml\ncollected 10 items / 4 deselected / 6 selected\n\ntests\\test_utils\\test_sentinel.py ......                                 [100%]\n\n======================= 6 passed, 4 deselected in 0.04s =======================",
+    "diagnostics": "Ground truth empirically verified: reproduces intended failure on parent and passes on reference fix.",
+    "duration_seconds": 195.02
+  },
+  {
+    "case_id": "REAL-CLICK-03",
+    "repository": "pallets/click",
+    "parent_commit_sha": "8b44edfff7d9a6c895fa804148c16b3a0bc9efb5",
+    "reference_commit_sha": "150d1071d69c5cdad7de78590013ffe56cf9e3bb",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "FAIL",
+    "reference_fetch": "PASS",
+    "reference_checkout": "PASS",
+    "reproduction_on_reference": "PASS",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "ground_truth_verified",
+    "expected_affected_files": [
+      "src/click/_termui_impl.py"
+    ],
+    "actual_affected_files": [
+      "CHANGES.md",
+      "src/click/_termui_impl.py",
+      "tests/test_termui.py"
+    ],
+    "test_command": "pytest tests/test_termui.py -k test_progressbar_lands_on_final_position",
+    "parent_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-CLICK-03\\repo\nconfigfile: pyproject.toml\ncollected 260 items / 248 deselected / 12 selected\n\ntests\\test_termui.py ..FF.F..FF.F                                        [100%]\n\n================================== FAILURES ===================================\n_____________ test_progressbar_lands_on_final_position[iterate-3] _____________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000014B5E85F610>\nupdate_min_steps = 3, drive = 'iterate'\n\n    @pytest.mark.parametrize(\"update_min_steps\", [1, 2, 3, 7, 20, 25])\n    @pytest.mark.parametrize(\"drive\", [\"iterate\", \"update\"])\n    def test_progressbar_lands_on_final_position(monkeypatch, update_min_steps, drive):\n        \"\"\"The bar reaches its total whatever the ``update_min_steps`` threshold.\n    \n        Regression for issue #3571: a threshold that does not divide the length\n        left a remainder pending, so `show_pos` froze below completion, reporting\n        `14/20` for a length of 20 and a threshold of 7. Thresholds of 1 and 2 do\n        divide 20, and 25 exceeds it, so nothing is ever rendered until the end.\n        \"\"\"\n        monkeypatch.setattr(click._termui_impl, \"isatty\", lambda _: True)\n        stream = io.StringIO()\n    \n        if drive == \"iterate\":\n            with click.progressbar(\n                range(20), show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in bar:\n                    pass\n        else:\n            with click.progressbar(\n                length=20, show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in range(20):\n                    bar.update(1)\n    \n>       assert bar.pos == 20\nE       assert 18 == 20\nE        +  where 18 = <click._termui_impl.ProgressBar object at 0x0000014B5E85F410>.pos\n\ntests\\test_termui.py:135: AssertionError\n_____________ test_progressbar_lands_on_final_position[iterate-7] _____________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000014B5E9A2990>\nupdate_min_steps = 7, drive = 'iterate'\n\n    @pytest.mark.parametrize(\"update_min_steps\", [1, 2, 3, 7, 20, 25])\n    @pytest.mark.parametrize(\"drive\", [\"iterate\", \"update\"])\n    def test_progressbar_lands_on_final_position(monkeypatch, update_min_steps, drive):\n        \"\"\"The bar reaches its total whatever the ``update_min_steps`` threshold.\n    \n        Regression for issue #3571: a threshold that does not divide the length\n        left a remainder pending, so `show_pos` froze below completion, reporting\n        `14/20` for a length of 20 and a threshold of 7. Thresholds of 1 and 2 do\n        divide 20, and 25 exceeds it, so nothing is ever rendered until the end.\n        \"\"\"\n        monkeypatch.setattr(click._termui_impl, \"isatty\", lambda _: True)\n        stream = io.StringIO()\n    \n        if drive == \"iterate\":\n            with click.progressbar(\n                range(20), show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in bar:\n                    pass\n        else:\n            with click.progressbar(\n                length=20, show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in range(20):\n                    bar.update(1)\n    \n>       assert bar.pos == 20\nE       assert 14 == 20\nE        +  where 14 = <click._termui_impl.ProgressBar object at 0x0000014B5E846A10>.pos\n\ntests\\test_termui.py:135: AssertionError\n____________ test_progressbar_lands_on_final_position[iterate-25] _____________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000014B5E83E5D0>\nupdate_min_steps = 25, drive = 'iterate'\n\n    @pytest.mark.parametrize(\"update_min_steps\", [1, 2, 3, 7, 20, 25])\n    @pytest.mark.parametrize(\"drive\", [\"iterate\", \"update\"])\n    def test_progressbar_lands_on_final_position(monkeypatch, update_min_steps, drive):\n        \"\"\"The bar reaches its total whatever the ``update_min_steps`` threshold.\n    \n        Regression for issue #3571: a threshold that does not divide the length\n        left a remainder pending, so `show_pos` froze below completion, reporting\n        `14/20` for a length of 20 and a threshold of 7. Thresholds of 1 and 2 do\n        divide 20, and 25 exceeds it, so nothing is ever rendered until the end.\n        \"\"\"\n        monkeypatch.setattr(click._termui_impl, \"isatty\", lambda _: True)\n        stream = io.StringIO()\n    \n        if drive == \"iterate\":\n            with click.progressbar(\n                range(20), show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in bar:\n                    pass\n        else:\n            with click.progressbar(\n                length=20, show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in range(20):\n                    bar.update(1)\n    \n>       assert bar.pos == 20\nE       assert 0 == 20\nE        +  where 0 = <click._termui_impl.ProgressBar object at 0x0000014B5E83E810>.pos\n\ntests\\test_termui.py:135: AssertionError\n_____________ test_progressbar_lands_on_final_position[update-3] ______________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000014B5E8BC890>\nupdate_min_steps = 3, drive = 'update'\n\n    @pytest.mark.parametrize(\"update_min_steps\", [1, 2, 3, 7, 20, 25])\n    @pytest.mark.parametrize(\"drive\", [\"iterate\", \"update\"])\n    def test_progressbar_lands_on_final_position(monkeypatch, update_min_steps, drive):\n        \"\"\"The bar reaches its total whatever the ``update_min_steps`` threshold.\n    \n        Regression for issue #3571: a threshold that does not divide the length\n        left a remainder pending, so `show_pos` froze below completion, reporting\n        `14/20` for a length of 20 and a threshold of 7. Thresholds of 1 and 2 do\n        divide 20, and 25 exceeds it, so nothing is ever rendered until the end.\n        \"\"\"\n        monkeypatch.setattr(click._termui_impl, \"isatty\", lambda _: True)\n        stream = io.StringIO()\n    \n        if drive == \"iterate\":\n            with click.progressbar(\n                range(20), show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in bar:\n                    pass\n        else:\n            with click.progressbar(\n                length=20, show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in range(20):\n                    bar.update(1)\n    \n>       assert bar.pos == 20\nE       assert 18 == 20\nE        +  where 18 = <click._termui_impl.ProgressBar object at 0x0000014B5E8A6FD0>.pos\n\ntests\\test_termui.py:135: AssertionError\n_____________ test_progressbar_lands_on_final_position[update-7] ______________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000014B5EAEA710>\nupdate_min_steps = 7, drive = 'update'\n\n    @pytest.mark.parametrize(\"update_min_steps\", [1, 2, 3, 7, 20, 25])\n    @pytest.mark.parametrize(\"drive\", [\"iterate\", \"update\"])\n    def test_progressbar_lands_on_final_position(monkeypatch, update_min_steps, drive):\n        \"\"\"The bar reaches its total whatever the ``update_min_steps`` threshold.\n    \n        Regression for issue #3571: a threshold that does not divide the length\n        left a remainder pending, so `show_pos` froze below completion, reporting\n        `14/20` for a length of 20 and a threshold of 7. Thresholds of 1 and 2 do\n        divide 20, and 25 exceeds it, so nothing is ever rendered until the end.\n        \"\"\"\n        monkeypatch.setattr(click._termui_impl, \"isatty\", lambda _: True)\n        stream = io.StringIO()\n    \n        if drive == \"iterate\":\n            with click.progressbar(\n                range(20), show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in bar:\n                    pass\n        else:\n            with click.progressbar(\n                length=20, show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in range(20):\n                    bar.update(1)\n    \n>       assert bar.pos == 20\nE       assert 14 == 20\nE        +  where 14 = <click._termui_impl.ProgressBar object at 0x0000014B5EAEAA10>.pos\n\ntests\\test_termui.py:135: AssertionError\n_____________ test_progressbar_lands_on_final_position[update-25] _____________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000014B5E5EED10>\nupdate_min_steps = 25, drive = 'update'\n\n    @pytest.mark.parametrize(\"update_min_steps\", [1, 2, 3, 7, 20, 25])\n    @pytest.mark.parametrize(\"drive\", [\"iterate\", \"update\"])\n    def test_progressbar_lands_on_final_position(monkeypatch, update_min_steps, drive):\n        \"\"\"The bar reaches its total whatever the ``update_min_steps`` threshold.\n    \n        Regression for issue #3571: a threshold that does not divide the length\n        left a remainder pending, so `show_pos` froze below completion, reporting\n        `14/20` for a length of 20 and a threshold of 7. Thresholds of 1 and 2 do\n        divide 20, and 25 exceeds it, so nothing is ever rendered until the end.\n        \"\"\"\n        monkeypatch.setattr(click._termui_impl, \"isatty\", lambda _: True)\n        stream = io.StringIO()\n    \n        if drive == \"iterate\":\n            with click.progressbar(\n                range(20), show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in bar:\n                    pass\n        else:\n            with click.progressbar(\n                length=20, show_pos=True, update_min_steps=update_min_steps, file=stream\n            ) as bar:\n                for _ in range(20):\n                    bar.update(1)\n    \n>       assert bar.pos == 20\nE       assert 0 == 20\nE        +  where 0 = <click._termui_impl.ProgressBar object at 0x0000014B5E5EC350>.pos\n\ntests\\test_termui.py:135: AssertionError\n=========================== short test summary info ===========================\nFAILED tests/test_termui.py::test_progressbar_lands_on_final_position[iterate-3]\nFAILED tests/test_termui.py::test_progressbar_lands_on_final_position[iterate-7]\nFAILED tests/test_termui.py::test_progressbar_lands_on_final_position[iterate-25]\nFAILED tests/test_termui.py::test_progressbar_lands_on_final_position[update-3]\nFAILED tests/test_termui.py::test_progressbar_lands_on_final_position[update-7]\nFAILED tests/test_termui.py::test_progressbar_lands_on_final_position[update-25]\n================= 6 failed, 6 passed, 248 deselected in 0.49s =================",
+    "reference_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-CLICK-03\\repo\nconfigfile: pyproject.toml\ncollected 260 items / 248 deselected / 12 selected\n\ntests\\test_termui.py ............                                        [100%]\n\n===================== 12 passed, 248 deselected in 0.27s ======================",
+    "diagnostics": "Ground truth empirically verified: reproduces intended failure on parent and passes on reference fix.",
+    "duration_seconds": 199.88
+  },
+  {
+    "case_id": "REAL-REQUESTS-01",
+    "repository": "psf/requests",
+    "parent_commit_sha": "fe693c492242ae532211e0c173324f09ca8cf227",
+    "reference_commit_sha": "cf01a743aff009b18c42c553a53640d44f026f5c",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "NOT_RUN",
+    "reference_fetch": "PASS",
+    "reference_checkout": "NOT_RUN",
+    "reproduction_on_reference": "NOT_RUN",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "test_configuration_failure",
+    "expected_affected_files": [
+      "test_requests.py"
+    ],
+    "actual_affected_files": [
+      "requests/models.py",
+      "test_requests.py"
+    ],
+    "test_command": "pytest test_requests.py",
+    "parent_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-01\\repo\ncollected 0 items / 1 error\n\n=================================== ERRORS ====================================\n______________________ ERROR collecting test_requests.py ______________________\nImportError while importing test module 'C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-01\\repo\\test_requests.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\nC:\\Python311\\Lib\\importlib\\__init__.py:126: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_requests.py:14: in <module>\n    import requests\nrequests\\__init__.py:58: in <module>\n    from . import utils\nrequests\\utils.py:25: in <module>\n    from .compat import parse_http_list as _parse_list_header\nrequests\\compat.py:7: in <module>\n    from .packages import chardet\nrequests\\packages\\__init__.py:3: in <module>\n    from . import urllib3\nrequests\\packages\\urllib3\\__init__.py:10: in <module>\n    from .connectionpool import (\nrequests\\packages\\urllib3\\connectionpool.py:38: in <module>\n    from .response import HTTPResponse\nrequests\\packages\\urllib3\\response.py:5: in <module>\n    from ._collections import HTTPHeaderDict\nrequests\\packages\\urllib3\\_collections.py:1: in <module>\n    from collections import Mapping, MutableMapping\nE   ImportError: cannot import name 'Mapping' from 'collections' (C:\\Python311\\Lib\\collections\\__init__.py)\n============================== warnings summary ===============================\nrequests\\utils.py:12\n  C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-01\\repo\\requests\\utils.py:12: DeprecationWarning: 'cgi' is deprecated and slated for removal in Python 3.13\n    import cgi\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nERROR test_requests.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n========================= 1 warning, 1 error in 0.30s =========================",
+    "reference_test_output": "",
+    "diagnostics": "Test configuration / selector did not match: ============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-01\\repo\ncollected 0 items / 1 error\n\n=================================== ERRORS ",
+    "duration_seconds": 214.44
+  },
+  {
+    "case_id": "REAL-REQUESTS-02",
+    "repository": "psf/requests",
+    "parent_commit_sha": "a0df2cbb10419037d11d04352b3175405ab52941",
+    "reference_commit_sha": "14fca026c5d359035a0825b250c99b8c1b04cc33",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "NOT_RUN",
+    "reference_fetch": "PASS",
+    "reference_checkout": "NOT_RUN",
+    "reproduction_on_reference": "NOT_RUN",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "test_configuration_failure",
+    "expected_affected_files": [
+      "requests/hooks.py",
+      "requests/models.py"
+    ],
+    "actual_affected_files": [
+      "docs/index.rst",
+      "requests/models.py",
+      "tests/test_requests.py"
+    ],
+    "test_command": "pytest test_requests.py -k test_hook_receives_request_and_response",
+    "parent_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-02\\repo\ncollected 0 items\n\n============================ no tests ran in 0.00s ============================\n\nERROR: file or directory not found: test_requests.py",
+    "reference_test_output": "",
+    "diagnostics": "Test configuration / selector did not match: ============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-02\\repo\ncollected 0 items\n\n============================ no tests ran in 0.00s ==",
+    "duration_seconds": 222.62
+  },
+  {
+    "case_id": "REAL-REQUESTS-03",
+    "repository": "psf/requests",
+    "parent_commit_sha": "091991be0da19de9108dbe5e3752917fea3d7fdc",
+    "reference_commit_sha": "de2494d36f53aaaf32f6b387c1112f2e37325533",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "NOT_RUN",
+    "reference_fetch": "PASS",
+    "reference_checkout": "NOT_RUN",
+    "reproduction_on_reference": "NOT_RUN",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "test_configuration_failure",
+    "expected_affected_files": [
+      "requests/sessions.py"
+    ],
+    "actual_affected_files": [
+      "requests/sessions.py",
+      "test_requests.py"
+    ],
+    "test_command": "pytest test_requests.py -k test_custom_method_bytes",
+    "parent_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-03\\repo\ncollected 0 items / 1 error\n\n=================================== ERRORS ====================================\n______________________ ERROR collecting test_requests.py ______________________\nImportError while importing test module 'C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-03\\repo\\test_requests.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\nC:\\Python311\\Lib\\importlib\\__init__.py:126: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_requests.py:14: in <module>\n    import requests\nrequests\\__init__.py:58: in <module>\n    from . import utils\nrequests\\utils.py:25: in <module>\n    from .compat import parse_http_list as _parse_list_header\nrequests\\compat.py:7: in <module>\n    from .packages import chardet\nrequests\\packages\\__init__.py:3: in <module>\n    from . import urllib3\nrequests\\packages\\urllib3\\__init__.py:10: in <module>\n    from .connectionpool import (\nrequests\\packages\\urllib3\\connectionpool.py:38: in <module>\n    from .response import HTTPResponse\nrequests\\packages\\urllib3\\response.py:5: in <module>\n    from ._collections import HTTPHeaderDict\nrequests\\packages\\urllib3\\_collections.py:1: in <module>\n    from collections import Mapping, MutableMapping\nE   ImportError: cannot import name 'Mapping' from 'collections' (C:\\Python311\\Lib\\collections\\__init__.py)\n============================== warnings summary ===============================\nrequests\\utils.py:12\n  C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-03\\repo\\requests\\utils.py:12: DeprecationWarning: 'cgi' is deprecated and slated for removal in Python 3.13\n    import cgi\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nERROR test_requests.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n========================= 1 warning, 1 error in 0.35s =========================",
+    "reference_test_output": "",
+    "diagnostics": "Test configuration / selector did not match: ============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-03\\repo\ncollected 0 items / 1 error\n\n=================================== ERRORS ",
+    "duration_seconds": 200.25
+  },
+  {
+    "case_id": "REAL-REQUESTS-04",
+    "repository": "psf/requests",
+    "parent_commit_sha": "978a89d5a32f6e91acf0812f7f2b29c9f97d6a0c",
+    "reference_commit_sha": "2df3c7c75dd4e3c825421da3aaa4b08bd91d4afb",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "NOT_RUN",
+    "reference_fetch": "PASS",
+    "reference_checkout": "NOT_RUN",
+    "reproduction_on_reference": "NOT_RUN",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "test_configuration_failure",
+    "expected_affected_files": [
+      "requests/models.py"
+    ],
+    "actual_affected_files": [
+      "requests/models.py",
+      "requests/sessions.py",
+      "test_requests.py"
+    ],
+    "test_command": "pytest test_requests.py -k test_prepared_request_method",
+    "parent_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-04\\repo\ncollected 0 items / 1 error\n\n=================================== ERRORS ====================================\n______________________ ERROR collecting test_requests.py ______________________\nImportError while importing test module 'C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-04\\repo\\test_requests.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\nrequests\\packages\\__init__.py:27: in <module>\n    from . import urllib3\nrequests\\packages\\urllib3\\__init__.py:10: in <module>\n    from .connectionpool import (\nrequests\\packages\\urllib3\\connectionpool.py:41: in <module>\n    from .response import HTTPResponse\nrequests\\packages\\urllib3\\response.py:6: in <module>\n    from ._collections import HTTPHeaderDict\nrequests\\packages\\urllib3\\_collections.py:1: in <module>\n    from collections import Mapping, MutableMapping\nE   ImportError: cannot import name 'Mapping' from 'collections' (C:\\Python311\\Lib\\collections\\__init__.py)\n\nDuring handling of the above exception, another exception occurred:\nC:\\Python311\\Lib\\importlib\\__init__.py:126: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntest_requests.py:15: in <module>\n    import requests\nrequests\\__init__.py:58: in <module>\n    from . import utils\nrequests\\utils.py:26: in <module>\n    from .compat import parse_http_list as _parse_list_header\nrequests\\compat.py:7: in <module>\n    from .packages import chardet\nrequests\\packages\\__init__.py:29: in <module>\n    import urllib3\nE   ModuleNotFoundError: No module named 'urllib3'\n============================== warnings summary ===============================\nrequests\\packages\\urllib3\\connectionpool.py:99\n  C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-04\\repo\\requests\\packages\\urllib3\\connectionpool.py:99: DeprecationWarning: invalid escape sequence '\\*'\n    \"\"\"\n\nrequests\\packages\\urllib3\\connectionpool.py:439\n  C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-04\\repo\\requests\\packages\\urllib3\\connectionpool.py:439: DeprecationWarning: invalid escape sequence '\\*'\n    \"\"\"\n\nrequests\\packages\\urllib3\\connectionpool.py:793\n  C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-04\\repo\\requests\\packages\\urllib3\\connectionpool.py:793: DeprecationWarning: invalid escape sequence '\\*'\n    \"\"\"\n\nrequests\\utils.py:12\n  C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-04\\repo\\requests\\utils.py:12: DeprecationWarning: 'cgi' is deprecated and slated for removal in Python 3.13\n    import cgi\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nERROR test_requests.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n======================== 4 warnings, 1 error in 1.06s =========================",
+    "reference_test_output": "",
+    "diagnostics": "Test configuration / selector did not match: ============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-04\\repo\ncollected 0 items / 1 error\n\n=================================== ERRORS ",
+    "duration_seconds": 206.32
+  },
+  {
+    "case_id": "REAL-REQUESTS-05",
+    "repository": "psf/requests",
+    "parent_commit_sha": "36453b95b13079296776d11b09cab2567ea3e703",
+    "reference_commit_sha": "21f8ee7e2a69ddf96662090a0f781640d8725d1e",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "FAIL",
+    "reference_fetch": "PASS",
+    "reference_checkout": "PASS",
+    "reproduction_on_reference": "FAIL",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "reference_test_failure",
+    "expected_affected_files": [
+      "requests/utils.py"
+    ],
+    "actual_affected_files": [
+      "requests/utils.py",
+      "tests/test_requests.py"
+    ],
+    "test_command": "pytest tests/test_requests.py -k test_response_chunk_size_int",
+    "parent_test_output": "ImportError while loading conftest 'C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-05\\repo\\tests\\conftest.py'.\ntests\\__init__.py:12: in <module>\n    from requests.packages import urllib3 as urllib3_bundle\nrequests\\__init__.py:64: in <module>\n    from . import utils\nrequests\\utils.py:24: in <module>\n    from .compat import parse_http_list as _parse_list_header\nrequests\\compat.py:7: in <module>\n    from .packages import chardet\nrequests\\packages\\__init__.py:29: in <module>\n    import urllib3\nE   ModuleNotFoundError: No module named 'urllib3'",
+    "reference_test_output": "ImportError while loading conftest 'C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-REQUESTS-05\\repo\\tests\\conftest.py'.\ntests\\__init__.py:12: in <module>\n    from requests.packages import urllib3 as urllib3_bundle\nrequests\\__init__.py:64: in <module>\n    from . import utils\nrequests\\utils.py:24: in <module>\n    from .compat import parse_http_list as _parse_list_header\nrequests\\compat.py:7: in <module>\n    from .packages import chardet\nrequests\\packages\\__init__.py:29: in <module>\n    import urllib3\nE   ModuleNotFoundError: No module named 'urllib3'",
+    "diagnostics": "Test failed on reference fix (exit=4): ",
+    "duration_seconds": 206.24
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-01",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "b40a0f4e33823e6d0f341f7e8684e359a99060d1",
+    "reference_commit_sha": "f7e8062c5855818fe70786ef46cbfcf8a1d7c365",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "FAIL",
+    "reference_fetch": "PASS",
+    "reference_checkout": "PASS",
+    "reproduction_on_reference": "PASS",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "ground_truth_verified",
+    "expected_affected_files": [
+      "src/marshmallow/fields.py"
+    ],
+    "actual_affected_files": [
+      "CHANGELOG.rst",
+      "src/marshmallow/fields.py",
+      "tests/test_fields.py"
+    ],
+    "test_command": "pytest tests/test_fields.py -k test_datetime_list_inner_format",
+    "parent_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0 -- C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-01\\venv\\Scripts\\python.exe\ncachedir: .pytest_cache\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-01\\repo\nconfigfile: setup.cfg\ncollecting ... collected 77 items / 76 deselected / 1 selected\n\ntests/test_fields.py::TestParentAndName::test_datetime_list_inner_format FAILED [100%]\n\n================================== FAILURES ===================================\n______________ TestParentAndName.test_datetime_list_inner_format ______________\ntests\\test_fields.py:182: in test_datetime_list_inner_format\n    schema = MySchema()\n             ^^^^^^^^^^\nsrc\\marshmallow\\schema.py:383: in __init__\n    self.fields = self._init_fields()\n                  ^^^^^^^^^^^^^^^^^^^\nsrc\\marshmallow\\schema.py:913: in _init_fields\n    self._bind_field(field_name, field_obj)\nsrc\\marshmallow\\schema.py:969: in _bind_field\n    field_obj._bind_to_schema(field_name, self)\nsrc\\marshmallow\\fields.py:717: in _bind_to_schema\n    field._bind_to_schema(field_name, self)\nsrc\\marshmallow\\fields.py:1117: in _bind_to_schema\n    or getattr(schema.opts, self.SCHEMA_OPTS_VAR_NAME)\n               ^^^^^^^^^^^\nE   AttributeError: 'Tuple' object has no attribute 'opts'\n============================== warnings summary ===============================\nsrc\\marshmallow\\__init__.py:17\n  C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-01\\repo\\src\\marshmallow\\__init__.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n    __version_info__ = tuple(LooseVersion(__version__).version)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED tests/test_fields.py::TestParentAndName::test_datetime_list_inner_format\n================= 1 failed, 76 deselected, 1 warning in 0.50s =================",
+    "reference_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0 -- C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-01\\venv\\Scripts\\python.exe\ncachedir: .pytest_cache\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-01\\repo\nconfigfile: setup.cfg\ncollecting ... collected 77 items / 76 deselected / 1 selected\n\ntests/test_fields.py::TestParentAndName::test_datetime_list_inner_format PASSED [100%]\n\n============================== warnings summary ===============================\nsrc\\marshmallow\\__init__.py:17\n  C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-01\\repo\\src\\marshmallow\\__init__.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n    __version_info__ = tuple(LooseVersion(__version__).version)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================= 1 passed, 76 deselected, 1 warning in 0.08s =================",
+    "diagnostics": "Ground truth empirically verified: reproduces intended failure on parent and passes on reference fix.",
+    "duration_seconds": 233.86
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-02",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "3265c13945a9533f9a3ade8d47eb9b32412c4c27",
+    "reference_commit_sha": "bb21373a05d51189ecf182f66813889de38cd200",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "FAIL",
+    "reference_fetch": "PASS",
+    "reference_checkout": "PASS",
+    "reproduction_on_reference": "PASS",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "ground_truth_verified",
+    "expected_affected_files": [
+      "src/marshmallow/fields.py"
+    ],
+    "actual_affected_files": [
+      "src/marshmallow/fields.py",
+      "tests/test_deserialization.py"
+    ],
+    "test_command": "pytest tests/test_deserialization.py -k test_invalid_timedelta_field_deserialization",
+    "parent_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-02\\repo\nconfigfile: pyproject.toml\ncollected 392 items / 385 deselected / 7 selected\n\ntests\\test_deserialization.py ....F..                                    [100%]\n\n================================== FAILURES ===================================\n_ TestFieldDeserialization.test_invalid_timedelta_field_deserialization[nan] __\n\nself = <tests.test_deserialization.TestFieldDeserialization object at 0x000002511591E1D0>\nin_value = 'nan'\n\n    @pytest.mark.parametrize(\n        \"in_value\", [\"\", \"badvalue\", [], 9999999999, \"nan\", \"inf\", \"-inf\"]\n    )\n    def test_invalid_timedelta_field_deserialization(self, in_value):\n        field = fields.TimeDelta(fields.TimeDelta.DAYS)\n        with pytest.raises(ValidationError) as excinfo:\n>           field.deserialize(in_value)\n\ntests\\test_deserialization.py:871: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\nsrc\\marshmallow\\fields.py:392: in deserialize\n    output = self._deserialize(value, attr, data, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <fields.TimeDelta(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, ...Invalid value.', 'invalid': 'Not a valid period of time.', 'format': '{input!r} cannot be formatted as a timedelta.'})>\nvalue = nan, attr = None, data = None, kwargs = {'days': nan}\n\n    def _deserialize(self, value, attr, data, **kwargs) -> dt.timedelta:\n        if isinstance(value, dt.timedelta):\n            return value\n        try:\n            value = float(value)\n        except (TypeError, ValueError) as error:\n            raise self.make_error(\"invalid\") from error\n    \n        kwargs = {self.precision: value}\n    \n        try:\n>           return dt.timedelta(**kwargs)\n                   ^^^^^^^^^^^^^^^^^^^^^^\nE           ValueError: cannot convert float NaN to integer\n\nsrc\\marshmallow\\fields.py:1583: ValueError\n=========================== short test summary info ===========================\nFAILED tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timedelta_field_deserialization[nan]\n================= 1 failed, 6 passed, 385 deselected in 0.45s =================",
+    "reference_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-02\\repo\nconfigfile: pyproject.toml\ncollected 392 items / 385 deselected / 7 selected\n\ntests\\test_deserialization.py .......                                    [100%]\n\n====================== 7 passed, 385 deselected in 0.31s ======================",
+    "diagnostics": "Ground truth empirically verified: reproduces intended failure on parent and passes on reference fix.",
+    "duration_seconds": 213.52
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-03",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "3207be31474530f7c0685dfbd7b4faca5b35fbf5",
+    "reference_commit_sha": "902f99c4151d1f0c4c3b8e8dfbafc7b6a76aeaa6",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "FAIL",
+    "reference_fetch": "PASS",
+    "reference_checkout": "PASS",
+    "reproduction_on_reference": "PASS",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "ground_truth_verified",
+    "expected_affected_files": [
+      "src/marshmallow/validate.py"
+    ],
+    "actual_affected_files": [
+      "AUTHORS.rst",
+      "CHANGELOG.rst",
+      "src/marshmallow/validate.py",
+      "tests/test_validate.py"
+    ],
+    "test_command": "pytest tests/test_validate.py -k \"test_url_absolute_valid or test_url_relative_invalid\"",
+    "parent_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-03\\repo\nconfigfile: pyproject.toml\ncollected 221 items / 186 deselected / 35 selected\n\ntests\\test_validate.py ......................FF...........               [100%]\n\n================================== FAILURES ===================================\n____________ test_url_absolute_valid[http://example.org#fragment] _____________\n\nvalid_url = 'http://example.org#fragment'\n\n    @pytest.mark.parametrize(\n        \"valid_url\",\n        [\n            \"http://example.org\",\n            \"https://example.org\",\n            \"ftp://example.org\",\n            \"ftps://example.org\",\n            \"http://example.co.jp\",\n            \"http://www.example.com/a%C2%B1b\",\n            \"http://www.example.com/~username/\",\n            \"http://info.example.com/?fred\",\n            \"http://xn--mgbh0fb.xn--kgbechtv/\",\n            \"http://example.com/blue/red%3Fand+green\",\n            \"http://www.example.com/?array%5Bkey%5D=value\",\n            \"http://xn--rsum-bpad.example.org/\",\n            \"http://123.45.67.8/\",\n            \"http://123.45.67.8:8329/\",\n            \"http://[2001:db8::ff00:42]:8329\",\n            \"http://[2001::1]:8329\",\n            \"http://www.example.com:8000/foo\",\n            \"http://user@example.com\",\n            \"http://user:pass@example.com\",\n            \"http://:pass@example.com\",\n            \"http://@example.com\",\n            \"http://AZaz09-._~%2A!$&'()*+,;=:@example.com\",\n            \"http://example.org#fragment\",\n            \"http://user@example.com#fragment\",\n        ],\n    )\n    def test_url_absolute_valid(valid_url):\n        validator = validate.URL(relative=False)\n>       assert validator(valid_url) == valid_url\n               ^^^^^^^^^^^^^^^^^^^^\n\ntests\\test_validate.py:41: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <URL(relative=False, absolute=True, error='Not a valid URL.')>\nvalue = 'http://example.org#fragment'\n\n    def __call__(self, value: str) -> str:\n        message = self._format_error(value)\n        if not value:\n            raise ValidationError(message)\n    \n        # Check first if the scheme is valid\n        scheme = None\n        if \"://\" in value:\n            scheme = value.split(\"://\", maxsplit=1)[0].lower()\n            if scheme not in self.schemes:\n                raise ValidationError(message)\n    \n        regex = self._regex(\n            relative=self.relative, absolute=self.absolute, require_tld=self.require_tld\n        )\n    \n        # Hostname is optional for file URLS. If absent it means `localhost`.\n        # Fill it in for the validation if needed\n        if scheme == \"file\" and value.lower().startswith(\"file:///\"):\n            matched = regex.search(\"file://localhost/\" + value[8:])\n        else:\n            matched = regex.search(value)\n    \n        if not matched:\n>           raise ValidationError(message)\nE           marshmallow.exceptions.ValidationError: Not a valid URL.\n\nsrc\\marshmallow\\validate.py:242: ValidationError\n__________ test_url_absolute_valid[http://user@example.com#fragment] __________\n\nvalid_url = 'http://user@example.com#fragment'\n\n    @pytest.mark.parametrize(\n        \"valid_url\",\n        [\n            \"http://example.org\",\n            \"https://example.org\",\n            \"ftp://example.org\",\n            \"ftps://example.org\",\n            \"http://example.co.jp\",\n            \"http://www.example.com/a%C2%B1b\",\n            \"http://www.example.com/~username/\",\n            \"http://info.example.com/?fred\",\n            \"http://xn--mgbh0fb.xn--kgbechtv/\",\n            \"http://example.com/blue/red%3Fand+green\",\n            \"http://www.example.com/?array%5Bkey%5D=value\",\n            \"http://xn--rsum-bpad.example.org/\",\n            \"http://123.45.67.8/\",\n            \"http://123.45.67.8:8329/\",\n            \"http://[2001:db8::ff00:42]:8329\",\n            \"http://[2001::1]:8329\",\n            \"http://www.example.com:8000/foo\",\n            \"http://user@example.com\",\n            \"http://user:pass@example.com\",\n            \"http://:pass@example.com\",\n            \"http://@example.com\",\n            \"http://AZaz09-._~%2A!$&'()*+,;=:@example.com\",\n            \"http://example.org#fragment\",\n            \"http://user@example.com#fragment\",\n        ],\n    )\n    def test_url_absolute_valid(valid_url):\n        validator = validate.URL(relative=False)\n>       assert validator(valid_url) == valid_url\n               ^^^^^^^^^^^^^^^^^^^^\n\ntests\\test_validate.py:41: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <URL(relative=False, absolute=True, error='Not a valid URL.')>\nvalue = 'http://user@example.com#fragment'\n\n    def __call__(self, value: str) -> str:\n        message = self._format_error(value)\n        if not value:\n            raise ValidationError(message)\n    \n        # Check first if the scheme is valid\n        scheme = None\n        if \"://\" in value:\n            scheme = value.split(\"://\", maxsplit=1)[0].lower()\n            if scheme not in self.schemes:\n                raise ValidationError(message)\n    \n        regex = self._regex(\n            relative=self.relative, absolute=self.absolute, require_tld=self.require_tld\n        )\n    \n        # Hostname is optional for file URLS. If absent it means `localhost`.\n        # Fill it in for the validation if needed\n        if scheme == \"file\" and value.lower().startswith(\"file:///\"):\n            matched = regex.search(\"file://localhost/\" + value[8:])\n        else:\n            matched = regex.search(value)\n    \n        if not matched:\n>           raise ValidationError(message)\nE           marshmallow.exceptions.ValidationError: Not a valid URL.\n\nsrc\\marshmallow\\validate.py:242: ValidationError\n=========================== short test summary info ===========================\nFAILED tests/test_validate.py::test_url_absolute_valid[http://example.org#fragment]\nFAILED tests/test_validate.py::test_url_absolute_valid[http://user@example.com#fragment]\n================ 2 failed, 33 passed, 186 deselected in 0.54s =================",
+    "reference_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-03\\repo\nconfigfile: pyproject.toml\ncollected 221 items / 186 deselected / 35 selected\n\ntests\\test_validate.py ...................................               [100%]\n\n===================== 35 passed, 186 deselected in 0.36s ======================",
+    "diagnostics": "Ground truth empirically verified: reproduces intended failure on parent and passes on reference fix.",
+    "duration_seconds": 222.75
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-04",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "3265c13945a9533f9a3ade8d47eb9b32412c4c27",
+    "reference_commit_sha": "ec2178c26b1a0b46e162a48a4aa5fd9840c0de59",
+    "runtime_version": "3.11.5",
+    "parent_fetch": "PASS",
+    "parent_checkout": "PASS",
+    "environment_build": "PASS",
+    "reproduction_on_parent": "FAIL",
+    "reference_fetch": "PASS",
+    "reference_checkout": "PASS",
+    "reproduction_on_reference": "PASS",
+    "patch_correspondence": "PASS",
+    "ground_truth_status": "ground_truth_verified",
+    "expected_affected_files": [
+      "src/marshmallow/fields.py"
+    ],
+    "actual_affected_files": [
+      "CHANGELOG.rst",
+      "src/marshmallow/fields.py",
+      "tests/base.py",
+      "tests/test_deserialization.py"
+    ],
+    "test_command": "pytest tests/test_deserialization.py -k test_enum_by_value_allow_none_default",
+    "parent_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-04\\repo\nconfigfile: pyproject.toml\ncollected 393 items / 392 deselected / 1 selected\n\ntests\\test_deserialization.py F                                          [100%]\n\n================================== FAILURES ===================================\n_______ TestFieldDeserialization.test_enum_by_value_allow_none_default ________\n\nself = <tests.test_deserialization.TestFieldDeserialization object at 0x000001F2EE0B8150>\n\n    def test_enum_by_value_allow_none_default(self):\n        field = fields.Enum(UltimatumEnum, by_value=True)\n>       assert field.deserialize(None) is None\n               ^^^^^^^^^^^^^^^^^^^^^^^\n\ntests\\test_deserialization.py:1287: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\nsrc\\marshmallow\\fields.py:380: in deserialize\n    self._validate_missing(value)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <fields.Enum(dump_default=<marshmallow.missing>, attribute=None, validate=None, required=False, load_only=False, dump_...d.', 'null': 'Field may not be null.', 'validator_failed': 'Invalid value.', 'unknown': 'Must be one of: {choices}.'})>\nvalue = None\n\n    def _validate_missing(self, value: typing.Any) -> None:\n        \"\"\"Validate missing values. Raise a :exc:`ValidationError` if\n        `value` should be considered missing.\n        \"\"\"\n        if value is missing_ and self.required:\n            raise self.make_error(\"required\")\n        if value is None and not self.allow_none:\n>           raise self.make_error(\"null\")\nE           marshmallow.exceptions.ValidationError: Field may not be null.\n\nsrc\\marshmallow\\fields.py:312: ValidationError\n=========================== short test summary info ===========================\nFAILED tests/test_deserialization.py::TestFieldDeserialization::test_enum_by_value_allow_none_default\n====================== 1 failed, 392 deselected in 0.65s ======================",
+    "reference_test_output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.5, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\anike\\AppData\\Local\\Temp\\agy_m12_calib_joey60qr\\REAL-MARSHMALLOW-04\\repo\nconfigfile: pyproject.toml\ncollected 393 items / 392 deselected / 1 selected\n\ntests\\test_deserialization.py .                                          [100%]\n\n====================== 1 passed, 392 deselected in 0.46s ======================",
+    "diagnostics": "Ground truth empirically verified: reproduces intended failure on parent and passes on reference fix.",
+    "duration_seconds": 233.82
+  }
+]

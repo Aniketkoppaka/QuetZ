@@ -1,0 +1,387 @@
+{
+  "run_id": "run_20260904_101007_ea3d13",
+  "summary": {
+    "total_cases_in_registry": 15,
+    "verified_cases_evaluated": 6,
+    "resolved_cases": 0,
+    "resolved_rate": 0.0,
+    "failure_distribution": {
+      "verification_failure": 3,
+      "exec_representation_failure": 1,
+      "planning_failure": 2
+    },
+    "mean_target_file_recall_at_3": 0.6667,
+    "mean_target_file_recall_at_5": 0.8333,
+    "mean_mrr": 0.4667,
+    "first_attempt_plan_validity_rate": null,
+    "grounding_violation_rate": 0.0,
+    "repair_recovery_rate": 0.0,
+    "preflight_rejection_accuracy": 1.0,
+    "execution_representation_success_rate": 1.0,
+    "rollback_success_rate": 1.0,
+    "clean_patch_rate": 1.0,
+    "live_llm_status": "live_llm_available",
+    "case_results": [
+      {
+        "case_id": "REAL-CLICK-02",
+        "repository": "pallets/click",
+        "parent_commit_sha": "3cbcf9b11546f4cf10b36d3e2e531733ba6fe001",
+        "reference_commit_sha": "4295457ddc7b5ca9a733d59ca40d9651b02b9b1d",
+        "actual_commit_sha": "3cbcf9b11546f4cf10b36d3e2e531733ba6fe001",
+        "failure_category": "verification_failure",
+        "is_resolved": false,
+        "retrieval_metrics": {
+          "total_retrieved": 7,
+          "retrieved_files": [
+            "src/click/decorators.py",
+            "src/click/core.py",
+            "src/click/core.py",
+            "src/click/decorators.py",
+            "src/click/_utils.py",
+            "tests/test_commands.py",
+            "tests/test_shell_completion.py"
+          ],
+          "first_relevant_rank": 5,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.2
+        },
+        "planning_metrics": {
+          "is_valid": true,
+          "total_attempts": 3,
+          "errors": [],
+          "syntax_errors_detected": 3,
+          "syntax_repairs_attempted": 1,
+          "syntax_recovered": true,
+          "syntax_gate_interventions": [
+            {
+              "attempt": 1,
+              "syntax_errors": [
+                "[syntax_error] Syntactically invalid Python generated for src/click/_utils.py: line 19, column 8: unexpected indent. Text: return f\"{self.__class__.__name__}.{self.name}\"",
+                "[syntax_error] Syntactically invalid Python generated for src/click/_utils.py: line 19, column 8: unexpected indent. Text: return f\"{self.__class__.__name__}.{self.name}\"",
+                "[syntax_error] Syntactically invalid Python generated for src/click/_utils.py: line 19, column 8: unexpected indent. Text: return f\"{self.__class__.__name__}.{self.name}\""
+              ]
+            }
+          ]
+        },
+        "execution_metrics": {
+          "status": "rolled_back",
+          "rolled_back": true,
+          "changes_count": 1,
+          "verifications_count": 3,
+          "error_message": "[subprocess_test] pytest tests/test_utils/test_sentinel.py -k test_sentinel_duplication_preserves_identity: Test process exited with non-zero code 2."
+        },
+        "live_llm_status": "live_llm_available",
+        "model_name": "mock",
+        "error_message": "[subprocess_test] pytest tests/test_utils/test_sentinel.py -k test_sentinel_duplication_preserves_identity: Test process exited with non-zero code 2."
+      },
+      {
+        "case_id": "REAL-CLICK-03",
+        "repository": "pallets/click",
+        "parent_commit_sha": "8b44edfff7d9a6c895fa804148c16b3a0bc9efb5",
+        "reference_commit_sha": "150d1071d69c5cdad7de78590013ffe56cf9e3bb",
+        "actual_commit_sha": "8b44edfff7d9a6c895fa804148c16b3a0bc9efb5",
+        "failure_category": "exec_representation_failure",
+        "is_resolved": false,
+        "retrieval_metrics": {
+          "total_retrieved": 14,
+          "retrieved_files": [
+            "src/click/_termui_impl.py",
+            "tests/test_termui.py",
+            "examples/termui/termui.py",
+            "src/click/shell_completion.py",
+            "src/click/shell_completion.py",
+            "tests/test_compat.py",
+            "tests/test_compat.py",
+            "src/click/py.typed",
+            "src/click/_termui_impl.py",
+            "src/click/_termui_impl.py",
+            "src/click/shell_completion.py",
+            "tests/test_options.py",
+            "tests/test_termui.py",
+            "tests/test_utils/__init__.py"
+          ],
+          "first_relevant_rank": 1,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0
+        },
+        "planning_metrics": {
+          "is_valid": true,
+          "total_attempts": 3,
+          "errors": [],
+          "syntax_errors_detected": 1,
+          "syntax_repairs_attempted": 1,
+          "syntax_recovered": true,
+          "syntax_gate_interventions": [
+            {
+              "attempt": 2,
+              "syntax_errors": [
+                "[syntax_error] Syntactically invalid Python generated for src/click/_termui_impl.py: line 157, column 8: unexpected indent. Text: if self.hidden or not self._is_atty:"
+              ]
+            }
+          ]
+        },
+        "execution_metrics": {
+          "status": "rolled_back",
+          "rolled_back": true,
+          "changes_count": 0,
+          "verifications_count": 0,
+          "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/click/_termui_impl.py'."
+        },
+        "live_llm_status": "live_llm_available",
+        "model_name": "mock",
+        "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/click/_termui_impl.py'."
+      },
+      {
+        "case_id": "REAL-MARSHMALLOW-01",
+        "repository": "marshmallow-code/marshmallow",
+        "parent_commit_sha": "b40a0f4e33823e6d0f341f7e8684e359a99060d1",
+        "reference_commit_sha": "f7e8062c5855818fe70786ef46cbfcf8a1d7c365",
+        "actual_commit_sha": "b40a0f4e33823e6d0f341f7e8684e359a99060d1",
+        "failure_category": "verification_failure",
+        "is_resolved": false,
+        "retrieval_metrics": {
+          "total_retrieved": 4,
+          "retrieved_files": [
+            "src/marshmallow/schema.py",
+            "src/marshmallow/fields.py",
+            "src/marshmallow/fields.py",
+            "tests/test_decorators.py"
+          ],
+          "first_relevant_rank": 2,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5
+        },
+        "planning_metrics": {
+          "is_valid": true,
+          "total_attempts": 2,
+          "errors": [],
+          "syntax_errors_detected": 0,
+          "syntax_repairs_attempted": 0,
+          "syntax_recovered": false,
+          "syntax_gate_interventions": []
+        },
+        "execution_metrics": {
+          "status": "rolled_back",
+          "rolled_back": true,
+          "changes_count": 1,
+          "verifications_count": 3,
+          "error_message": "[subprocess_test] pytest tests/test_fields.py -k test_datetime_list_inner_format: Test process exited with non-zero code 4."
+        },
+        "live_llm_status": "live_llm_available",
+        "model_name": "mock",
+        "error_message": "[subprocess_test] pytest tests/test_fields.py -k test_datetime_list_inner_format: Test process exited with non-zero code 4."
+      },
+      {
+        "case_id": "REAL-MARSHMALLOW-02",
+        "repository": "marshmallow-code/marshmallow",
+        "parent_commit_sha": "3265c13945a9533f9a3ade8d47eb9b32412c4c27",
+        "reference_commit_sha": "bb21373a05d51189ecf182f66813889de38cd200",
+        "actual_commit_sha": "3265c13945a9533f9a3ade8d47eb9b32412c4c27",
+        "failure_category": "verification_failure",
+        "is_resolved": false,
+        "retrieval_metrics": {
+          "total_retrieved": 28,
+          "retrieved_files": [
+            "tests/test_deserialization.py",
+            "src/marshmallow/fields.py",
+            "src/marshmallow/exceptions.py",
+            "src/marshmallow/fields.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_fields.py",
+            "tests/test_fields.py",
+            "tests/test_registry.py",
+            "tests/test_schema.py",
+            "tests/mypy_test_cases/test_validation_error.py",
+            "docs/marshmallow.error_store.rst",
+            "src/marshmallow/exceptions.py",
+            "src/marshmallow/exceptions.py",
+            "src/marshmallow/exceptions.py",
+            "tests/test_deserialization.py",
+            "src/marshmallow/fields.py",
+            "src/marshmallow/fields.py",
+            "src/marshmallow/fields.py",
+            "src/marshmallow/schema.py",
+            "src/marshmallow/utils.py",
+            "src/marshmallow/fields.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "src/marshmallow/exceptions.py"
+          ],
+          "first_relevant_rank": 2,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5
+        },
+        "planning_metrics": {
+          "is_valid": true,
+          "total_attempts": 1,
+          "errors": [],
+          "syntax_errors_detected": 0,
+          "syntax_repairs_attempted": 0,
+          "syntax_recovered": false,
+          "syntax_gate_interventions": []
+        },
+        "execution_metrics": {
+          "status": "rolled_back",
+          "rolled_back": true,
+          "changes_count": 2,
+          "verifications_count": 4,
+          "error_message": "[subprocess_test] pytest tests/test_deserialization.py -k test_invalid_timedelta_field_deserialization: Test process exited with non-zero code 4."
+        },
+        "live_llm_status": "live_llm_available",
+        "model_name": "mock",
+        "error_message": "[subprocess_test] pytest tests/test_deserialization.py -k test_invalid_timedelta_field_deserialization: Test process exited with non-zero code 4."
+      },
+      {
+        "case_id": "REAL-MARSHMALLOW-03",
+        "repository": "marshmallow-code/marshmallow",
+        "parent_commit_sha": "3207be31474530f7c0685dfbd7b4faca5b35fbf5",
+        "reference_commit_sha": "902f99c4151d1f0c4c3b8e8dfbafc7b6a76aeaa6",
+        "actual_commit_sha": "3207be31474530f7c0685dfbd7b4faca5b35fbf5",
+        "failure_category": "planning_failure",
+        "is_resolved": false,
+        "retrieval_metrics": {
+          "total_retrieved": 30,
+          "retrieved_files": [
+            "tests/test_validate.py",
+            "src/marshmallow/validate.py",
+            "src/marshmallow/fields.py",
+            "tests/test_validate.py",
+            "tests/test_validate.py",
+            "tests/test_validate.py",
+            "tests/test_validate.py",
+            "tests/test_validate.py",
+            "tests/test_validate.py",
+            "tests/test_validate.py",
+            "tests/test_validate.py",
+            "src/marshmallow/fields.py",
+            "src/marshmallow/schema.py",
+            "docs/marshmallow.validate.rst",
+            "examples/flask_example.py",
+            "examples/inflection_example.py",
+            "examples/package_json_example.py",
+            "src/marshmallow/validate.py",
+            "src/marshmallow/fields.py",
+            "src/marshmallow/fields.py",
+            "src/marshmallow/fields.py",
+            "src/marshmallow/schema.py",
+            "src/marshmallow/types.py",
+            "src/marshmallow/validate.py",
+            "tests/base.py",
+            "tests/test_validate.py",
+            "tests/test_validate.py",
+            "tests/test_validate.py",
+            "tests/test_validate.py",
+            "tests/base.py"
+          ],
+          "first_relevant_rank": 2,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5
+        },
+        "planning_metrics": {
+          "is_valid": false,
+          "total_attempts": 3,
+          "errors": [
+            "Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)"
+          ],
+          "syntax_errors_detected": 2,
+          "syntax_repairs_attempted": 1,
+          "syntax_recovered": false,
+          "syntax_gate_interventions": [
+            {
+              "attempt": 2,
+              "syntax_errors": [
+                "[syntax_error] Syntactically invalid Python generated for tests/test_validate.py: line 1, column 255: unterminated string literal (detected at line 1). Text: def test_url_fragment_after_empty_path() -> None: validator = validate.URL(relative=False) assert validator('https://example.com#frag') == 'https://example.com#frag' assert validator('http://example.com#section1') == 'http://example.com#section1' assert 'f",
+                "[syntax_error] Syntactically invalid Python generated for tests/test_validate.py: line 1, column 86: invalid syntax. Text: def test_url_fragment_with_query() -> None: validator = validate.URL(relative=False) assert validator('https://example.com?query=1#frag') == 'https://example.com?query=1#frag' assert validator('http://example.com/path?query=1#section') == 'http://example'"
+              ]
+            }
+          ]
+        },
+        "execution_metrics": {},
+        "live_llm_status": "live_llm_available",
+        "model_name": "mock",
+        "error_message": "Planner failed to generate valid plan: (PlanValidationError(step_id=None, field='schema', error_type='json_schema_error', message='Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)'),)"
+      },
+      {
+        "case_id": "REAL-MARSHMALLOW-04",
+        "repository": "marshmallow-code/marshmallow",
+        "parent_commit_sha": "3265c13945a9533f9a3ade8d47eb9b32412c4c27",
+        "reference_commit_sha": "ec2178c26b1a0b46e162a48a4aa5fd9840c0de59",
+        "actual_commit_sha": "3265c13945a9533f9a3ade8d47eb9b32412c4c27",
+        "failure_category": "planning_failure",
+        "is_resolved": false,
+        "retrieval_metrics": {
+          "total_retrieved": 30,
+          "retrieved_files": [
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_serialization.py",
+            "tests/test_serialization.py",
+            "src/marshmallow/fields.py",
+            "src/marshmallow/fields.py",
+            "tests/test_decorators.py",
+            "tests/test_decorators.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_deserialization.py",
+            "tests/test_schema.py",
+            "tests/test_serialization.py",
+            "tests/__init__.py",
+            "tests/conftest.py",
+            "tests/foo_serializer.py",
+            "tests/mypy_test_cases/test_class_registry.py",
+            "tests/mypy_test_cases/test_schema.py"
+          ],
+          "first_relevant_rank": 10,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "mrr": 0.1
+        },
+        "planning_metrics": {
+          "is_valid": false,
+          "total_attempts": 3,
+          "errors": [
+            "Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)"
+          ],
+          "syntax_errors_detected": 3,
+          "syntax_repairs_attempted": 1,
+          "syntax_recovered": false,
+          "syntax_gate_interventions": [
+            {
+              "attempt": 2,
+              "syntax_errors": [
+                "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_allows_none(self):        import enum        class ColorEnum(enum.Enum):            red = 'red'            blue = None        field = fields.Enum(ColorEnum, by_value=True)        # Should not raise ValidationErr",
+                "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_explicit_allow_none_false(self):        import enum        class ColorEnum(enum.Enum):            red = 'red'            blue = None        field = fields.Enum(ColorEnum, by_value=True, allow_none=False)",
+                "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_false_none_member_no_auto_allow_none(self):        import enum        class ColorEnum(enum.Enum):            red = 'red'            blue = None        field = fields.Enum(ColorEnum, by_value=False)        # Should not auto-"
+              ]
+            }
+          ]
+        },
+        "execution_metrics": {},
+        "live_llm_status": "live_llm_available",
+        "model_name": "mock",
+        "error_message": "Planner failed to generate valid plan: (PlanValidationError(step_id=None, field='schema', error_type='json_schema_error', message='Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)'),)"
+      }
+    ]
+  }
+}

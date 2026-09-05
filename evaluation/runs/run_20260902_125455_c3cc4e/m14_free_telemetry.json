@@ -1,0 +1,307 @@
+[
+  {
+    "case_id": "REAL-CLICK-02",
+    "repository": "pallets/click",
+    "parent_commit_sha": "3cbcf9b11546f4cf10b36d3e2e531733ba6fe001",
+    "reference_commit_sha": "4295457ddc7b5ca9a733d59ca40d9651b02b9b1d",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "exec_representation_failure",
+    "retrieval_metrics": {
+      "total_retrieved": 7,
+      "retrieved_files": [
+        "src/click/decorators.py",
+        "src/click/core.py",
+        "src/click/core.py",
+        "src/click/decorators.py",
+        "src/click/_utils.py",
+        "tests/test_commands.py",
+        "tests/test_shell_completion.py"
+      ],
+      "first_relevant_rank": 5,
+      "recall_at_3": 0.0,
+      "recall_at_5": 1.0,
+      "mrr": 0.2
+    },
+    "planning_metrics": {
+      "is_valid": true,
+      "total_attempts": 1,
+      "errors": []
+    },
+    "execution_metrics": {
+      "status": "rolled_back",
+      "rolled_back": true,
+      "changes_count": 2,
+      "verifications_count": 0,
+      "error_message": "Step 'step-3' failed during execution: Step 'step-3': search_content was not found in 'src/click/_utils.py'."
+    },
+    "duration_seconds": 61.342,
+    "error_message": "Step 'step-3' failed during execution: Step 'step-3': search_content was not found in 'src/click/_utils.py'."
+  },
+  {
+    "case_id": "REAL-CLICK-03",
+    "repository": "pallets/click",
+    "parent_commit_sha": "8b44edfff7d9a6c895fa804148c16b3a0bc9efb5",
+    "reference_commit_sha": "150d1071d69c5cdad7de78590013ffe56cf9e3bb",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "verification_failure",
+    "retrieval_metrics": {
+      "total_retrieved": 14,
+      "retrieved_files": [
+        "src/click/_termui_impl.py",
+        "tests/test_termui.py",
+        "examples/termui/termui.py",
+        "src/click/shell_completion.py",
+        "src/click/shell_completion.py",
+        "tests/test_compat.py",
+        "tests/test_compat.py",
+        "src/click/py.typed",
+        "src/click/_termui_impl.py",
+        "src/click/_termui_impl.py",
+        "src/click/shell_completion.py",
+        "tests/test_options.py",
+        "tests/test_termui.py",
+        "tests/test_utils/__init__.py"
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "mrr": 1.0
+    },
+    "planning_metrics": {
+      "is_valid": true,
+      "total_attempts": 3,
+      "errors": []
+    },
+    "execution_metrics": {
+      "status": "rolled_back",
+      "rolled_back": true,
+      "changes_count": 2,
+      "verifications_count": 2,
+      "error_message": "[syntax_ast] src/click/_termui_impl.py: SyntaxError in src/click/_termui_impl.py: invalid syntax (_termui_impl.py, line 156); [syntax_ast] tests/test_termui.py: SyntaxError in tests/test_termui.py: expected an indented block after function definition on line 1 (test_termui.py, line 1)"
+    },
+    "duration_seconds": 183.08,
+    "error_message": "[syntax_ast] src/click/_termui_impl.py: SyntaxError in src/click/_termui_impl.py: invalid syntax (_termui_impl.py, line 156); [syntax_ast] tests/test_termui.py: SyntaxError in tests/test_termui.py: expected an indented block after function definition on line 1 (test_termui.py, line 1)"
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-01",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "b40a0f4e33823e6d0f341f7e8684e359a99060d1",
+    "reference_commit_sha": "f7e8062c5855818fe70786ef46cbfcf8a1d7c365",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "verification_failure",
+    "retrieval_metrics": {
+      "total_retrieved": 4,
+      "retrieved_files": [
+        "src/marshmallow/schema.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "tests/test_decorators.py"
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "mrr": 0.5
+    },
+    "planning_metrics": {
+      "is_valid": true,
+      "total_attempts": 2,
+      "errors": []
+    },
+    "execution_metrics": {
+      "status": "rolled_back",
+      "rolled_back": true,
+      "changes_count": 3,
+      "verifications_count": 3,
+      "error_message": "[syntax_ast] src/marshmallow/fields.py: SyntaxError in src/marshmallow/fields.py: unexpected indent (fields.py, line 336); [syntax_ast] tests/test_fields.py: SyntaxError in tests/test_fields.py: unexpected indent (test_fields.py, line 1); [syntax_ast] tests/test_fields.py: SyntaxError in tests/test_fields.py: unexpected indent (test_fields.py, line 1)"
+    },
+    "duration_seconds": 113.937,
+    "error_message": "[syntax_ast] src/marshmallow/fields.py: SyntaxError in src/marshmallow/fields.py: unexpected indent (fields.py, line 336); [syntax_ast] tests/test_fields.py: SyntaxError in tests/test_fields.py: unexpected indent (test_fields.py, line 1); [syntax_ast] tests/test_fields.py: SyntaxError in tests/test_fields.py: unexpected indent (test_fields.py, line 1)"
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-02",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "3265c13945a9533f9a3ade8d47eb9b32412c4c27",
+    "reference_commit_sha": "bb21373a05d51189ecf182f66813889de38cd200",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "exec_representation_failure",
+    "retrieval_metrics": {
+      "total_retrieved": 28,
+      "retrieved_files": [
+        "tests/test_deserialization.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/exceptions.py",
+        "src/marshmallow/fields.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_fields.py",
+        "tests/test_fields.py",
+        "tests/test_registry.py",
+        "tests/test_schema.py",
+        "tests/mypy_test_cases/test_validation_error.py",
+        "docs/marshmallow.error_store.rst",
+        "src/marshmallow/exceptions.py",
+        "src/marshmallow/exceptions.py",
+        "src/marshmallow/exceptions.py",
+        "tests/test_deserialization.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/schema.py",
+        "src/marshmallow/utils.py",
+        "src/marshmallow/fields.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "src/marshmallow/exceptions.py"
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "mrr": 0.5
+    },
+    "planning_metrics": {
+      "is_valid": true,
+      "total_attempts": 2,
+      "errors": []
+    },
+    "execution_metrics": {
+      "status": "rolled_back",
+      "rolled_back": true,
+      "changes_count": 0,
+      "verifications_count": 0,
+      "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/marshmallow/fields.py'."
+    },
+    "duration_seconds": 128.385,
+    "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/marshmallow/fields.py'."
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-03",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "3207be31474530f7c0685dfbd7b4faca5b35fbf5",
+    "reference_commit_sha": "902f99c4151d1f0c4c3b8e8dfbafc7b6a76aeaa6",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "verification_failure",
+    "retrieval_metrics": {
+      "total_retrieved": 30,
+      "retrieved_files": [
+        "tests/test_validate.py",
+        "src/marshmallow/validate.py",
+        "src/marshmallow/fields.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/schema.py",
+        "docs/marshmallow.validate.rst",
+        "examples/flask_example.py",
+        "examples/inflection_example.py",
+        "examples/package_json_example.py",
+        "src/marshmallow/validate.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/schema.py",
+        "src/marshmallow/types.py",
+        "src/marshmallow/validate.py",
+        "tests/base.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/base.py"
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "mrr": 0.5
+    },
+    "planning_metrics": {
+      "is_valid": true,
+      "total_attempts": 2,
+      "errors": []
+    },
+    "execution_metrics": {
+      "status": "rolled_back",
+      "rolled_back": true,
+      "changes_count": 3,
+      "verifications_count": 6,
+      "error_message": "[symbol_existence] tests/test_validate.py::test_url_fragment_variations: Symbol 'test_url_fragment_variations' not found in 'tests/test_validate.py' after edits.; [symbol_existence] tests/test_validate.py::test_url_fragment_variations: Symbol 'test_url_fragment_variations' not found in 'tests/test_validate.py' after edits."
+    },
+    "duration_seconds": 157.139,
+    "error_message": "[symbol_existence] tests/test_validate.py::test_url_fragment_variations: Symbol 'test_url_fragment_variations' not found in 'tests/test_validate.py' after edits.; [symbol_existence] tests/test_validate.py::test_url_fragment_variations: Symbol 'test_url_fragment_variations' not found in 'tests/test_validate.py' after edits."
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-04",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "3265c13945a9533f9a3ade8d47eb9b32412c4c27",
+    "reference_commit_sha": "ec2178c26b1a0b46e162a48a4aa5fd9840c0de59",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "exec_representation_failure",
+    "retrieval_metrics": {
+      "total_retrieved": 30,
+      "retrieved_files": [
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_serialization.py",
+        "tests/test_serialization.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "tests/test_decorators.py",
+        "tests/test_decorators.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_schema.py",
+        "tests/test_serialization.py",
+        "tests/__init__.py",
+        "tests/conftest.py",
+        "tests/foo_serializer.py",
+        "tests/mypy_test_cases/test_class_registry.py",
+        "tests/mypy_test_cases/test_schema.py"
+      ],
+      "first_relevant_rank": 10,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "mrr": 0.1
+    },
+    "planning_metrics": {
+      "is_valid": true,
+      "total_attempts": 2,
+      "errors": []
+    },
+    "execution_metrics": {
+      "status": "rolled_back",
+      "rolled_back": true,
+      "changes_count": 0,
+      "verifications_count": 0,
+      "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/marshmallow/fields.py'."
+    },
+    "duration_seconds": 118.337,
+    "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/marshmallow/fields.py'."
+  }
+]

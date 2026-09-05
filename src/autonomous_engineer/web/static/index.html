@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuetZ // Autonomous Software Engineer Chat Console</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="theme-terminal">
+  <!-- Top Global Command Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <div class="brand-badge">
+        <svg class="brand-svg-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 2 12 12 22 22 12 12 2"></polygon>
+        </svg>
+        <span class="brand-name">QuetZ</span>
+        <span class="brand-tag">AGENT CHAT CONSOLE</span>
+      </div>
+      <div class="system-status-indicator">
+        <span class="pulse-dot"></span>
+        <span class="status-label" id="sys-status-label">FAIL-CLOSED BOUNDARY</span>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <div class="active-session-header" id="header-session-title">
+        <span class="sess-title-text">GH-2419: Click Empty Composite Tuple Fix</span>
+        <span class="badge badge-success" id="header-session-status">COMPLETED</span>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <div class="cmd-k-hint" id="cmd-launcher" title="Open Command Palette">
+        <span class="key-combo">⌘K</span>
+        <span class="cmd-text">QUICK JUMP</span>
+      </div>
+      <div class="active-env-badge">
+        <span class="env-chip">PYTHON 3.11</span>
+        <span class="env-chip chip-policy">FAIL-CLOSED</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body: Sessions Sidebar + Chat Thread Feed -->
+  <div class="console-body">
+    <!-- Left Navigation: Chat Sessions & Context -->
+    <aside class="sidebar">
+      <div class="sidebar-header-row">
+        <div class="nav-section-title">ENGINEERING SESSIONS</div>
+        <button class="btn btn-sm btn-outline btn-new-session-accent" id="btn-new-session">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>NEW</span>
+        </button>
+      </div>
+      <div class="session-search-box">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="session-search-input" placeholder="Filter sessions..." autocomplete="off">
+      </div>
+      <ul class="session-list" id="session-list">
+        <!-- Dynamically loaded sessions -->
+      </ul>
+
+      <!-- Secondary System Views -->
+      <div class="sidebar-section-divider"></div>
+      <div class="nav-section-title">WORKSPACE CONTEXT</div>
+      <ul class="nav-menu">
+        <li class="nav-item active" data-action="show-chat">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </span>
+          <span class="nav-title">ACTIVE THREAD</span>
+        </li>
+        <li class="nav-item" data-action="show-repos">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+          </span>
+          <span class="nav-title">REPOSITORIES</span>
+          <span class="nav-count" id="badge-repos">3</span>
+        </li>
+        <li class="nav-item" data-action="show-agents">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="7" r="4"></circle>
+              <path d="M5.5 21a6.5 6.5 0 0 1 13 0"></path>
+            </svg>
+          </span>
+          <span class="nav-title">AGENT HIERARCHY</span>
+          <span class="nav-count">6</span>
+        </li>
+        <li class="nav-item" data-action="show-artifacts">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </span>
+          <span class="nav-title">ARTIFACTS</span>
+          <span class="nav-count">3</span>
+        </li>
+      </ul>
+
+      <!-- Policy Boundary Footer -->
+      <div class="sidebar-policy-footer">
+        <div class="policy-header">POLICY BOUNDARY</div>
+        <div class="policy-item"><span class="dot-red">■</span> NET EGRESS: BLOCKED</div>
+        <div class="policy-item"><span class="dot-red">■</span> SUBPROCESS: DENIED</div>
+        <div class="policy-item"><span class="dot-green">■</span> AST VALIDATION: STRICT</div>
+        <div class="policy-item"><span class="dot-green">■</span> ROLLBACK SNAPSHOT: ACTIVE</div>
+      </div>
+    </aside>
+
+    <!-- Main Viewport: Chat Feed or Supporting Context Views -->
+    <main class="chat-viewport" id="main-viewport">
+      <!-- Chat Conversation View (Default) -->
+      <section class="chat-feed-container" id="chat-feed-container">
+        <!-- Thread Messages Stream -->
+        <div class="chat-messages-stream" id="chat-messages-stream">
+          <!-- Dynamically populated user & agent turns with cards -->
+        </div>
+
+        <!-- Sticky Bottom Chat Input Dock -->
+        <div class="chat-input-dock">
+          <!-- Quick Steering Action Chips -->
+          <div class="quick-chips-row">
+            <button class="chip-btn" data-action="quick-plan">
+              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+              <span>Synthesize DAG Plan</span>
+            </button>
+            <button class="chip-btn" data-action="quick-test">
+              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Targeted Pytest</span>
+            </button>
+            <button class="chip-btn" data-action="quick-mutation">
+              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>
+              <span>Run Mutation Matrix</span>
+            </button>
+            <button class="chip-btn" data-action="quick-rollback">
+              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+              <span>Rollback Snapshot</span>
+            </button>
+          </div>
+          <div class="input-controls-row">
+            <span class="input-prompt-symbol">❯</span>
+            <textarea id="chat-input" placeholder="Type instructions, paste an issue URL, or click a quick action above..." rows="1"></textarea>
+            <button class="btn btn-send" id="btn-send-message">
+              <span>SEND</span>
+              <span class="key-hint">↵</span>
+            </button>
+          </div>
+          <div class="input-footer-bar">
+            <span class="text-muted">Press <strong>Enter</strong> to send, <strong>Shift+Enter</strong> for newline • Strict Fail-Closed Execution</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Overlay View: Repositories -->
+      <section class="context-panel hidden" id="panel-repos">
+        <div class="view-header">
+          <div class="title-cluster">
+            <h2>INDEXED REPOSITORY MAPS</h2>
+            <span class="subtitle">AST Graph, Symbol Tables & Blast Radius Reference Points</span>
+          </div>
+          <button class="btn btn-outline close-context-btn">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            BACK TO CHAT
+          </button>
+        </div>
+        <div class="grid-cards" id="repos-container"></div>
+      </section>
+
+      <!-- Overlay View: Agent Supervisor Hierarchy -->
+      <section class="context-panel hidden" id="panel-agents">
+        <div class="view-header">
+          <div class="title-cluster">
+            <h2>SPECIALIZED AGENT SUPERVISOR HIERARCHY</h2>
+            <span class="subtitle">Fail-Closed Capabilities, Isolation Boundaries & Reviewer Authority</span>
+          </div>
+          <button class="btn btn-outline close-context-btn">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            BACK TO CHAT
+          </button>
+        </div>
+        <div class="grid-cards" id="agents-container"></div>
+      </section>
+
+      <!-- Overlay View: Artifacts -->
+      <section class="context-panel hidden" id="panel-artifacts">
+        <div class="view-header">
+          <div class="title-cluster">
+            <h2>GENERATED VERIFICATION ARTIFACTS</h2>
+            <span class="subtitle">Signed Delivery Payloads, Proof Digests & PR Bundles</span>
+          </div>
+          <button class="btn btn-outline close-context-btn">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            BACK TO CHAT
+          </button>
+        </div>
+        <div class="grid-cards" id="artifacts-container"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Custom Native Engineering Modal for New Session Form -->
+  <div class="modal-overlay hidden" id="new-session-modal">
+    <div class="modal-dialog modal-dialog-form">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="text-green">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span class="modal-title">INITIALIZE AUTONOMOUS SESSION</span>
+        </div>
+        <button class="btn-close-modal" id="btn-close-new-modal">✕</button>
+      </div>
+      <form id="form-new-session" class="modal-form-body">
+        <div class="form-group">
+          <label class="form-label" for="session-title-input">SESSION TITLE / OBJECTIVE</label>
+          <input type="text" id="session-title-input" class="form-input" placeholder="e.g. GH-3012: Fix UnicodeDecodeError in JSON parser" required autofocus>
+          <span class="form-hint">Brief problem description or target GitHub issue reference.</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="session-repo-input">TARGET REPOSITORY</label>
+          <input type="text" id="session-repo-input" class="form-input" placeholder="e.g. pallets/click, psf/requests, django/django" value="pallets/click" required>
+          <span class="form-hint">Target git reference or local workspace path for RepositoryMap indexing.</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="session-policy-select">FAIL-CLOSED SAFETY ENFORCEMENT</label>
+          <select id="session-policy-select" class="form-select">
+            <option value="strict-fail-closed" selected>Strict Fail-Closed (Network Denied, Subprocess Denied, AST Checked)</option>
+            <option value="permissive-eval">Evaluation Harness (Local Pytest Permitted)</option>
+          </select>
+        </div>
+        <div class="modal-actions-row">
+          <button type="button" class="btn btn-outline" id="btn-cancel-new-modal">CANCEL</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-new-modal">INITIALIZE WORKSPACE</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Command Palette Modal (Ctrl+K) -->
+  <div class="modal-overlay hidden" id="cmd-modal">
+    <div class="modal-dialog">
+      <div class="cmd-input-wrap">
+        <span class="cmd-icon">❯</span>
+        <input type="text" id="cmd-input" placeholder="Type a command or jump to session (e.g. 'click', 'requests', 'django')..." autofocus>
+        <span class="cmd-esc-hint">ESC to close</span>
+      </div>
+      <div class="cmd-results" id="cmd-results"></div>
+    </div>
+  </div>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

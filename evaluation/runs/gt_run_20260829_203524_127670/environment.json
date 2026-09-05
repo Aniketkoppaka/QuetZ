@@ -1,0 +1,16 @@
+{
+  "run_id": "gt_run_20260829_203524_127670",
+  "timestamp": "2026-08-29T20:35:24.337517+00:00",
+  "environment": {
+    "python_version": "3.11.5",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "os_name": "nt",
+    "git_version": "git version 2.49.0.windows.1",
+    "pytest_version": "9.1.1",
+    "docker_available": true,
+    "docker_daemon_running": false,
+    "wsl_available": false,
+    "network_git_remote_working": true,
+    "notes": "Docker daemon is not running.; WSL is not installed/enabled."
+  }
+}

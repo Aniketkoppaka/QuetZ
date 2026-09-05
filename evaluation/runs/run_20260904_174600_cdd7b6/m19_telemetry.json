@@ -1,0 +1,981 @@
+[
+  {
+    "case_id": "REAL-CLICK-02",
+    "repository": "pallets/click",
+    "parent_commit_sha": "3cbcf9b11546f4cf10b36d3e2e531733ba6fe001",
+    "reference_commit_sha": "4295457ddc7b5ca9a733d59ca40d9651b02b9b1d",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "exec_representation_failure",
+    "scaffold_telemetry": {
+      "scaffold_enabled": true,
+      "attempts_executed": 2,
+      "repair_turns_used": 1,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_utils/test_sentinel.py: line 1, column 19: invalid syntax. Text: import copyimport pickleimport pytestfrom click._utils import Sentineldef test_sentinel_copy():"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 1,
+          "prompt_tokens": 12940,
+          "completion_tokens": 2729,
+          "latency_ms": 10727.69,
+          "output_length_chars": 9541,
+          "is_truncated": false,
+          "raw_output_snippet": "{\n  \"plan_id\": \"plan-REAL-CLICK-02\",\n  \"issue_id\": \"REAL-CLICK-02\",\n  \"summary\": \"Add copy, deepcopy, and pickle support to Sentinel enum class\",\n  \"rationale\": \"The Sentinel enum class (with UNSET an"
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": true,
+          "errors": [],
+          "error_count": 0,
+          "syntax_error_count": 0,
+          "prompt_tokens": 18019,
+          "completion_tokens": 3907,
+          "latency_ms": 10670.88,
+          "output_length_chars": 4692,
+          "is_truncated": false,
+          "raw_output_snippet": "{\n  \"plan_id\": \"plan-REAL-CLICK-02\",\n  \"issue_id\": \"REAL-CLICK-02\",\n  \"summary\": \"Add copy, deepcopy, and pickle support to Sentinel enum class\",\n  \"rationale\": \"The Sentinel enum class (with UNSET an"
+        }
+      ]
+    },
+    "syntax_gate_telemetry": {
+      "syntax_gate_enabled": true,
+      "syntax_errors_detected": 1,
+      "syntax_repairs_attempted": 1,
+      "syntax_recovered": true,
+      "syntax_gate_interventions": [
+        {
+          "attempt": 1,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_utils/test_sentinel.py: line 1, column 19: invalid syntax. Text: import copyimport pickleimport pytestfrom click._utils import Sentineldef test_sentinel_copy():"
+          ]
+        }
+      ]
+    },
+    "retrieval_metrics": {
+      "total_retrieved": 7,
+      "retrieved_files": [
+        "src/click/decorators.py",
+        "src/click/core.py",
+        "src/click/core.py",
+        "src/click/decorators.py",
+        "src/click/_utils.py",
+        "tests/test_commands.py",
+        "tests/test_shell_completion.py"
+      ],
+      "first_relevant_rank": 5,
+      "recall_at_3": 0.0,
+      "recall_at_5": 1.0,
+      "mrr": 0.2
+    },
+    "planning_metrics": {
+      "is_valid": true,
+      "total_attempts": 2,
+      "errors": [],
+      "syntax_errors_detected": 1,
+      "syntax_repairs_attempted": 1,
+      "syntax_recovered": true,
+      "syntax_gate_interventions": [
+        {
+          "attempt": 1,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_utils/test_sentinel.py: line 1, column 19: invalid syntax. Text: import copyimport pickleimport pytestfrom click._utils import Sentineldef test_sentinel_copy():"
+          ]
+        }
+      ],
+      "scaffold_active": true,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_utils/test_sentinel.py: line 1, column 19: invalid syntax. Text: import copyimport pickleimport pytestfrom click._utils import Sentineldef test_sentinel_copy():"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 1,
+          "prompt_tokens": 12940,
+          "completion_tokens": 2729,
+          "latency_ms": 10727.69,
+          "output_length_chars": 9541,
+          "is_truncated": false,
+          "raw_output_snippet": "{\n  \"plan_id\": \"plan-REAL-CLICK-02\",\n  \"issue_id\": \"REAL-CLICK-02\",\n  \"summary\": \"Add copy, deepcopy, and pickle support to Sentinel enum class\",\n  \"rationale\": \"The Sentinel enum class (with UNSET an"
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": true,
+          "errors": [],
+          "error_count": 0,
+          "syntax_error_count": 0,
+          "prompt_tokens": 18019,
+          "completion_tokens": 3907,
+          "latency_ms": 10670.88,
+          "output_length_chars": 4692,
+          "is_truncated": false,
+          "raw_output_snippet": "{\n  \"plan_id\": \"plan-REAL-CLICK-02\",\n  \"issue_id\": \"REAL-CLICK-02\",\n  \"summary\": \"Add copy, deepcopy, and pickle support to Sentinel enum class\",\n  \"rationale\": \"The Sentinel enum class (with UNSET an"
+        }
+      ]
+    },
+    "execution_metrics": {
+      "status": "rolled_back",
+      "rolled_back": true,
+      "changes_count": 0,
+      "verifications_count": 0,
+      "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/click/_utils.py'."
+    },
+    "duration_seconds": 155.938,
+    "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/click/_utils.py'."
+  },
+  {
+    "case_id": "REAL-CLICK-03",
+    "repository": "pallets/click",
+    "parent_commit_sha": "8b44edfff7d9a6c895fa804148c16b3a0bc9efb5",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "planning_failure",
+    "scaffold_telemetry": {
+      "scaffold_enabled": true,
+      "attempts_executed": 3,
+      "repair_turns_used": 2,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[json_schema_error] Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 0,
+          "prompt_tokens": 13736,
+          "completion_tokens": 4096,
+          "latency_ms": 10504.45,
+          "output_length_chars": 15953,
+          "is_truncated": true,
+          "raw_output_snippet": "Let me analyze the issue and the provided context to understand what needs to be fixed.\n\nThe issue is: \"ProgressBar rendering in _termui_impl.py should settle cleanly on its completed position when fi"
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": false,
+          "errors": [
+            "[hallucinated_symbol] Step 'step-3' references non-existent symbol 'test_progress_bar_finish_updates_position' in file 'tests/test_termui.py'.",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 257: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 654: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps    bar.update(3)  # _completed_intervals=3, pos=0 (not rendered)    bar.update(2)  # _completed_intervals=5, triggers render at pos=5    bar.update(3)  # _completed_intervals=3, pos=5 (not rendered, loop would end here)    # At this point pos=5 but length=10, simulating early loop exit    bar.finish()    # finish() should update pos to length    assert bar.pos == bar.length    assert bar.finished"
+          ],
+          "error_count": 3,
+          "syntax_error_count": 2,
+          "prompt_tokens": 18009,
+          "completion_tokens": 1447,
+          "latency_ms": 11526.15,
+          "output_length_chars": 5381,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-real-click-03-1\", \"issue_id\": \"REAL-CLICK-03\", \"summary\": \"Fix ProgressBar finish() to update position to length, ensuring final render shows completed position\", \"rationale\": \"The P"
+        },
+        {
+          "attempt_number": 3,
+          "is_valid": false,
+          "errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 257: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 1,
+          "prompt_tokens": 21185,
+          "completion_tokens": 1142,
+          "latency_ms": 10781.98,
+          "output_length_chars": 3699,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-real-click-03-1\", \"issue_id\": \"REAL-CLICK-03\", \"summary\": \"Fix ProgressBar finish() to update position to length, ensuring final render shows completed position\", \"rationale\": \"The P"
+        }
+      ]
+    },
+    "syntax_gate_telemetry": {
+      "syntax_gate_enabled": true,
+      "syntax_errors_detected": 3,
+      "syntax_repairs_attempted": 2,
+      "syntax_recovered": false,
+      "syntax_gate_interventions": [
+        {
+          "attempt": 2,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 257: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 654: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps    bar.update(3)  # _completed_intervals=3, pos=0 (not rendered)    bar.update(2)  # _completed_intervals=5, triggers render at pos=5    bar.update(3)  # _completed_intervals=3, pos=5 (not rendered, loop would end here)    # At this point pos=5 but length=10, simulating early loop exit    bar.finish()    # finish() should update pos to length    assert bar.pos == bar.length    assert bar.finished"
+          ]
+        },
+        {
+          "attempt": 3,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 257: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps"
+          ]
+        }
+      ]
+    },
+    "retrieval_metrics": {
+      "total_retrieved": 14,
+      "retrieved_files": [
+        "src/click/_termui_impl.py",
+        "tests/test_termui.py",
+        "examples/termui/termui.py",
+        "src/click/shell_completion.py",
+        "src/click/shell_completion.py",
+        "tests/test_compat.py",
+        "tests/test_compat.py",
+        "src/click/py.typed",
+        "src/click/_termui_impl.py",
+        "src/click/_termui_impl.py",
+        "src/click/shell_completion.py",
+        "tests/test_options.py",
+        "tests/test_termui.py",
+        "tests/test_utils/__init__.py"
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "mrr": 1.0
+    },
+    "planning_metrics": {
+      "is_valid": false,
+      "total_attempts": 3,
+      "errors": [
+        "Syntactically invalid Python generated for tests/test_termui.py: line 1, column 257: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps"
+      ],
+      "syntax_errors_detected": 3,
+      "syntax_repairs_attempted": 2,
+      "syntax_recovered": false,
+      "syntax_gate_interventions": [
+        {
+          "attempt": 2,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 257: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 654: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps    bar.update(3)  # _completed_intervals=3, pos=0 (not rendered)    bar.update(2)  # _completed_intervals=5, triggers render at pos=5    bar.update(3)  # _completed_intervals=3, pos=5 (not rendered, loop would end here)    # At this point pos=5 but length=10, simulating early loop exit    bar.finish()    # finish() should update pos to length    assert bar.pos == bar.length    assert bar.finished"
+          ]
+        },
+        {
+          "attempt": 3,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 257: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps"
+          ]
+        }
+      ],
+      "scaffold_active": true,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[json_schema_error] Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 0,
+          "prompt_tokens": 13736,
+          "completion_tokens": 4096,
+          "latency_ms": 10504.45,
+          "output_length_chars": 15953,
+          "is_truncated": true,
+          "raw_output_snippet": "Let me analyze the issue and the provided context to understand what needs to be fixed.\n\nThe issue is: \"ProgressBar rendering in _termui_impl.py should settle cleanly on its completed position when fi"
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": false,
+          "errors": [
+            "[hallucinated_symbol] Step 'step-3' references non-existent symbol 'test_progress_bar_finish_updates_position' in file 'tests/test_termui.py'.",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 257: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 654: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps    bar.update(3)  # _completed_intervals=3, pos=0 (not rendered)    bar.update(2)  # _completed_intervals=5, triggers render at pos=5    bar.update(3)  # _completed_intervals=3, pos=5 (not rendered, loop would end here)    # At this point pos=5 but length=10, simulating early loop exit    bar.finish()    # finish() should update pos to length    assert bar.pos == bar.length    assert bar.finished"
+          ],
+          "error_count": 3,
+          "syntax_error_count": 2,
+          "prompt_tokens": 18009,
+          "completion_tokens": 1447,
+          "latency_ms": 11526.15,
+          "output_length_chars": 5381,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-real-click-03-1\", \"issue_id\": \"REAL-CLICK-03\", \"summary\": \"Fix ProgressBar finish() to update position to length, ensuring final render shows completed position\", \"rationale\": \"The P"
+        },
+        {
+          "attempt_number": 3,
+          "is_valid": false,
+          "errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_termui.py: line 1, column 257: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 1,
+          "prompt_tokens": 21185,
+          "completion_tokens": 1142,
+          "latency_ms": 10781.98,
+          "output_length_chars": 3699,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-real-click-03-1\", \"issue_id\": \"REAL-CLICK-03\", \"summary\": \"Fix ProgressBar finish() to update position to length, ensuring final render shows completed position\", \"rationale\": \"The P"
+        }
+      ]
+    },
+    "execution_metrics": null,
+    "duration_seconds": 181.099,
+    "error_message": "Planner failed to generate valid plan: (PlanValidationError(step_id='step-2', field='content', error_type='syntax_error', message=\"Syntactically invalid Python generated for tests/test_termui.py: line 1, column 257: expected an indented block after function definition on line 1. Text: def test_progress_bar_finish_updates_position(runner):    # Create progress bar with update_min_steps > 1 to simulate skipped final renders    bar = _create_progress(length=10, update_min_steps=5)    # Simulate updates that don't reach update_min_steps\"),)"
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-01",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "b40a0f4e33823e6d0f341f7e8684e359a99060d1",
+    "reference_commit_sha": "f7e8062c5855818fe70786ef46cbfcf8a1d7c365",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "verification_failure",
+    "scaffold_telemetry": {
+      "scaffold_enabled": true,
+      "attempts_executed": 3,
+      "repair_turns_used": 2,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_fields.py: line 1, column 4: unexpected indent. Text: def test_datetime_nested_in_list_resolves_format(self):        from marshmallow import Schema, fields        class TestSchema(Schema):            class Meta:                datetimeformat = '%Y-%m-%d'            dates = fields.List(fields.DateTime())n#",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_fields.py: line 1, column 4: unexpected indent. Text: def test_datetime_nested_in_tuple_resolves_format(self):        from marshmallow import Schema, fields        class TestSchema(Schema):            class Meta:                datetimeformat = '%Y-%m-%d'            dates = fields.Tuple((fields.DateTime,"
+          ],
+          "error_count": 5,
+          "syntax_error_count": 5,
+          "prompt_tokens": 11932,
+          "completion_tokens": 3334,
+          "latency_ms": 7033.61,
+          "output_length_chars": 8924,
+          "is_truncated": false,
+          "raw_output_snippet": "{\n  \"plan_id\": \"plan-REAL-MARSHMALLOW-01\",\n  \"issue_id\": \"REAL-MARSHMALLOW-01\",\n  \"summary\": \"Fix DateTime field format resolution when nested in List or Tuple fields by ensuring proper schema binding"
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": false,
+          "errors": [
+            "[json_schema_error] Failed to parse model output as valid ImplementationPlan JSON: Expecting property name enclosed in double quotes: line 2 column 2 (char 3)"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 0,
+          "prompt_tokens": 16639,
+          "completion_tokens": 4096,
+          "latency_ms": 8558.75,
+          "output_length_chars": 7686,
+          "is_truncated": false,
+          "raw_output_snippet": "{\n {\"plan_id\": \"plan-REAL-MARSHMALLOW-01\", \"issue_id\": \"REAL-MARSHMALLOW-01\", \"summary\": \"Fix DateTime field format resolution when nested in List or Tuple fields by ensuring proper schema binding pro"
+        },
+        {
+          "attempt_number": 3,
+          "is_valid": true,
+          "errors": [],
+          "error_count": 0,
+          "syntax_error_count": 0,
+          "prompt_tokens": 20388,
+          "completion_tokens": 2510,
+          "latency_ms": 7629.29,
+          "output_length_chars": 7939,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-REAL-MARSHMALLOW-01\", \"issue_id\": \"REAL-MARSHMALLOW-01\", \"summary\": \"Fix DateTime field format resolution when nested in List or Tuple fields by ensuring proper schema binding propag"
+        }
+      ]
+    },
+    "syntax_gate_telemetry": {
+      "syntax_gate_enabled": true,
+      "syntax_errors_detected": 5,
+      "syntax_repairs_attempted": 1,
+      "syntax_recovered": true,
+      "syntax_gate_interventions": [
+        {
+          "attempt": 1,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_fields.py: line 1, column 4: unexpected indent. Text: def test_datetime_nested_in_list_resolves_format(self):        from marshmallow import Schema, fields        class TestSchema(Schema):            class Meta:                datetimeformat = '%Y-%m-%d'            dates = fields.List(fields.DateTime())n#",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_fields.py: line 1, column 4: unexpected indent. Text: def test_datetime_nested_in_tuple_resolves_format(self):        from marshmallow import Schema, fields        class TestSchema(Schema):            class Meta:                datetimeformat = '%Y-%m-%d'            dates = fields.Tuple((fields.DateTime,"
+          ]
+        }
+      ]
+    },
+    "retrieval_metrics": {
+      "total_retrieved": 4,
+      "retrieved_files": [
+        "src/marshmallow/schema.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "tests/test_decorators.py"
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "mrr": 0.5
+    },
+    "planning_metrics": {
+      "is_valid": true,
+      "total_attempts": 3,
+      "errors": [],
+      "syntax_errors_detected": 5,
+      "syntax_repairs_attempted": 1,
+      "syntax_recovered": true,
+      "syntax_gate_interventions": [
+        {
+          "attempt": 1,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_fields.py: line 1, column 4: unexpected indent. Text: def test_datetime_nested_in_list_resolves_format(self):        from marshmallow import Schema, fields        class TestSchema(Schema):            class Meta:                datetimeformat = '%Y-%m-%d'            dates = fields.List(fields.DateTime())n#",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_fields.py: line 1, column 4: unexpected indent. Text: def test_datetime_nested_in_tuple_resolves_format(self):        from marshmallow import Schema, fields        class TestSchema(Schema):            class Meta:                datetimeformat = '%Y-%m-%d'            dates = fields.Tuple((fields.DateTime,"
+          ]
+        }
+      ],
+      "scaffold_active": true,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for src/marshmallow/fields.py: line 598, column 6: unmatched ')'. Text: Field):",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_fields.py: line 1, column 4: unexpected indent. Text: def test_datetime_nested_in_list_resolves_format(self):        from marshmallow import Schema, fields        class TestSchema(Schema):            class Meta:                datetimeformat = '%Y-%m-%d'            dates = fields.List(fields.DateTime())n#",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_fields.py: line 1, column 4: unexpected indent. Text: def test_datetime_nested_in_tuple_resolves_format(self):        from marshmallow import Schema, fields        class TestSchema(Schema):            class Meta:                datetimeformat = '%Y-%m-%d'            dates = fields.Tuple((fields.DateTime,"
+          ],
+          "error_count": 5,
+          "syntax_error_count": 5,
+          "prompt_tokens": 11932,
+          "completion_tokens": 3334,
+          "latency_ms": 7033.61,
+          "output_length_chars": 8924,
+          "is_truncated": false,
+          "raw_output_snippet": "{\n  \"plan_id\": \"plan-REAL-MARSHMALLOW-01\",\n  \"issue_id\": \"REAL-MARSHMALLOW-01\",\n  \"summary\": \"Fix DateTime field format resolution when nested in List or Tuple fields by ensuring proper schema binding"
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": false,
+          "errors": [
+            "[json_schema_error] Failed to parse model output as valid ImplementationPlan JSON: Expecting property name enclosed in double quotes: line 2 column 2 (char 3)"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 0,
+          "prompt_tokens": 16639,
+          "completion_tokens": 4096,
+          "latency_ms": 8558.75,
+          "output_length_chars": 7686,
+          "is_truncated": false,
+          "raw_output_snippet": "{\n {\"plan_id\": \"plan-REAL-MARSHMALLOW-01\", \"issue_id\": \"REAL-MARSHMALLOW-01\", \"summary\": \"Fix DateTime field format resolution when nested in List or Tuple fields by ensuring proper schema binding pro"
+        },
+        {
+          "attempt_number": 3,
+          "is_valid": true,
+          "errors": [],
+          "error_count": 0,
+          "syntax_error_count": 0,
+          "prompt_tokens": 20388,
+          "completion_tokens": 2510,
+          "latency_ms": 7629.29,
+          "output_length_chars": 7939,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-REAL-MARSHMALLOW-01\", \"issue_id\": \"REAL-MARSHMALLOW-01\", \"summary\": \"Fix DateTime field format resolution when nested in List or Tuple fields by ensuring proper schema binding propag"
+        }
+      ]
+    },
+    "execution_metrics": {
+      "status": "rolled_back",
+      "rolled_back": true,
+      "changes_count": 5,
+      "verifications_count": 5,
+      "error_message": "[syntax_ast] src/marshmallow/fields.py: SyntaxError in src/marshmallow/fields.py: unexpected indent (fields.py, line 1); [syntax_ast] src/marshmallow/fields.py: SyntaxError in src/marshmallow/fields.py: unexpected indent (fields.py, line 1); [syntax_ast] src/marshmallow/fields.py: SyntaxError in src/marshmallow/fields.py: unexpected indent (fields.py, line 1); [syntax_ast] tests/test_fields.py: SyntaxError in tests/test_fields.py: unexpected indent (test_fields.py, line 1); [syntax_ast] tests/test_fields.py: SyntaxError in tests/test_fields.py: unexpected indent (test_fields.py, line 1)"
+    },
+    "duration_seconds": 325.147,
+    "error_message": "[syntax_ast] src/marshmallow/fields.py: SyntaxError in src/marshmallow/fields.py: unexpected indent (fields.py, line 1); [syntax_ast] src/marshmallow/fields.py: SyntaxError in src/marshmallow/fields.py: unexpected indent (fields.py, line 1); [syntax_ast] src/marshmallow/fields.py: SyntaxError in src/marshmallow/fields.py: unexpected indent (fields.py, line 1); [syntax_ast] tests/test_fields.py: SyntaxError in tests/test_fields.py: unexpected indent (test_fields.py, line 1); [syntax_ast] tests/test_fields.py: SyntaxError in tests/test_fields.py: unexpected indent (test_fields.py, line 1)"
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-02",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "3265c13945a9533f9a3ade8d47eb9b32412c4c27",
+    "reference_commit_sha": "bb21373a05d51189ecf182f66813889de38cd200",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "exec_representation_failure",
+    "scaffold_telemetry": {
+      "scaffold_enabled": true,
+      "attempts_executed": 2,
+      "repair_turns_used": 1,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[json_schema_error] Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 0,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "latency_ms": 6163.63,
+          "output_length_chars": 0,
+          "is_truncated": true,
+          "raw_output_snippet": ""
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": true,
+          "errors": [],
+          "error_count": 0,
+          "syntax_error_count": 0,
+          "prompt_tokens": 14072,
+          "completion_tokens": 1010,
+          "latency_ms": 6871.55,
+          "output_length_chars": 2303,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-REAL-MARSHMALLOW-02\", \"issue_id\": \"REAL-MARSHMALLOW-02\", \"summary\": \"Fix TimeDelta field to raise ValidationError instead of bare ValueError when receiving NaN string\", \"rationale\": "
+        }
+      ]
+    },
+    "syntax_gate_telemetry": {
+      "syntax_gate_enabled": true,
+      "syntax_errors_detected": 0,
+      "syntax_repairs_attempted": 0,
+      "syntax_recovered": false,
+      "syntax_gate_interventions": []
+    },
+    "retrieval_metrics": {
+      "total_retrieved": 28,
+      "retrieved_files": [
+        "tests/test_deserialization.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/exceptions.py",
+        "src/marshmallow/fields.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_fields.py",
+        "tests/test_fields.py",
+        "tests/test_registry.py",
+        "tests/test_schema.py",
+        "tests/mypy_test_cases/test_validation_error.py",
+        "docs/marshmallow.error_store.rst",
+        "src/marshmallow/exceptions.py",
+        "src/marshmallow/exceptions.py",
+        "src/marshmallow/exceptions.py",
+        "tests/test_deserialization.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/schema.py",
+        "src/marshmallow/utils.py",
+        "src/marshmallow/fields.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "src/marshmallow/exceptions.py"
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "mrr": 0.5
+    },
+    "planning_metrics": {
+      "is_valid": true,
+      "total_attempts": 2,
+      "errors": [],
+      "syntax_errors_detected": 0,
+      "syntax_repairs_attempted": 0,
+      "syntax_recovered": false,
+      "syntax_gate_interventions": [],
+      "scaffold_active": true,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[json_schema_error] Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 0,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "latency_ms": 6163.63,
+          "output_length_chars": 0,
+          "is_truncated": true,
+          "raw_output_snippet": ""
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": true,
+          "errors": [],
+          "error_count": 0,
+          "syntax_error_count": 0,
+          "prompt_tokens": 14072,
+          "completion_tokens": 1010,
+          "latency_ms": 6871.55,
+          "output_length_chars": 2303,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-REAL-MARSHMALLOW-02\", \"issue_id\": \"REAL-MARSHMALLOW-02\", \"summary\": \"Fix TimeDelta field to raise ValidationError instead of bare ValueError when receiving NaN string\", \"rationale\": "
+        }
+      ]
+    },
+    "execution_metrics": {
+      "status": "rolled_back",
+      "rolled_back": true,
+      "changes_count": 0,
+      "verifications_count": 0,
+      "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/marshmallow/fields.py'."
+    },
+    "duration_seconds": 25.491,
+    "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/marshmallow/fields.py'."
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-03",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "3207be31474530f7c0685dfbd7b4faca5b35fbf5",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "planning_failure",
+    "scaffold_telemetry": {
+      "scaffold_enabled": true,
+      "attempts_executed": 3,
+      "repair_turns_used": 2,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[json_schema_error] Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 0,
+          "prompt_tokens": 12240,
+          "completion_tokens": 4096,
+          "latency_ms": 7154.14,
+          "output_length_chars": 14645,
+          "is_truncated": true,
+          "raw_output_snippet": "Let me analyze the issue:\n\nThe issue is that `validate.URL` rejects an absolute URL whose fragment follows an empty path with no query (e.g., 'https://example.com#frag'). The problem is that the regex"
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": false,
+          "errors": [
+            "[json_schema_error] Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 0,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "latency_ms": 10964.37,
+          "output_length_chars": 0,
+          "is_truncated": true,
+          "raw_output_snippet": ""
+        },
+        {
+          "attempt_number": 3,
+          "is_valid": false,
+          "errors": [
+            "[hallucinated_symbol] Step 'step-1' references non-existent symbol 'URL.RegexMemoizer._regex_generator' in file 'src/marshmallow/validate.py'.",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_validate.py: line 1, column 251: unterminated string literal (detected at line 1). Text: def test_url_fragment_after_empty_path() -> None: validator = validate.URL(relative=False) assert validator('https://example.com#frag') == 'https://example.com#frag' assert validator('https://example.com#') == 'https://example.com#' assert validator('https",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_validate.py: line 1, column 91: invalid syntax. Text: def test_url_empty_query_and_fragment() -> None: validator = validate.URL(relative=False) assert validator('https://example.com?') == 'https://example.com?' assert validator('https://example.com?#frag') == 'https://example.com?#frag'"
+          ],
+          "error_count": 3,
+          "syntax_error_count": 2,
+          "prompt_tokens": 16612,
+          "completion_tokens": 1803,
+          "latency_ms": 10480.53,
+          "output_length_chars": 6130,
+          "is_truncated": false,
+          "raw_output_snippet": "{\n  \"plan_id\": \"fix-url-fragment-validation\",\n  \"issue_id\": \"REAL-MARSHMALLOW-03\",\n  \"summary\": \"Fix URL validator to accept fragments after empty path (e.g., 'https://example.com#frag')\",\n  \"rational"
+        }
+      ]
+    },
+    "syntax_gate_telemetry": {
+      "syntax_gate_enabled": true,
+      "syntax_errors_detected": 2,
+      "syntax_repairs_attempted": 1,
+      "syntax_recovered": false,
+      "syntax_gate_interventions": [
+        {
+          "attempt": 3,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_validate.py: line 1, column 251: unterminated string literal (detected at line 1). Text: def test_url_fragment_after_empty_path() -> None: validator = validate.URL(relative=False) assert validator('https://example.com#frag') == 'https://example.com#frag' assert validator('https://example.com#') == 'https://example.com#' assert validator('https",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_validate.py: line 1, column 91: invalid syntax. Text: def test_url_empty_query_and_fragment() -> None: validator = validate.URL(relative=False) assert validator('https://example.com?') == 'https://example.com?' assert validator('https://example.com?#frag') == 'https://example.com?#frag'"
+          ]
+        }
+      ]
+    },
+    "retrieval_metrics": {
+      "total_retrieved": 30,
+      "retrieved_files": [
+        "tests/test_validate.py",
+        "src/marshmallow/validate.py",
+        "src/marshmallow/fields.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/schema.py",
+        "docs/marshmallow.validate.rst",
+        "examples/flask_example.py",
+        "examples/inflection_example.py",
+        "examples/package_json_example.py",
+        "src/marshmallow/validate.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/schema.py",
+        "src/marshmallow/types.py",
+        "src/marshmallow/validate.py",
+        "tests/base.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/test_validate.py",
+        "tests/base.py"
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "mrr": 0.5
+    },
+    "planning_metrics": {
+      "is_valid": false,
+      "total_attempts": 3,
+      "errors": [
+        "Step 'step-1' references non-existent symbol 'URL.RegexMemoizer._regex_generator' in file 'src/marshmallow/validate.py'.",
+        "Syntactically invalid Python generated for tests/test_validate.py: line 1, column 251: unterminated string literal (detected at line 1). Text: def test_url_fragment_after_empty_path() -> None: validator = validate.URL(relative=False) assert validator('https://example.com#frag') == 'https://example.com#frag' assert validator('https://example.com#') == 'https://example.com#' assert validator('https",
+        "Syntactically invalid Python generated for tests/test_validate.py: line 1, column 91: invalid syntax. Text: def test_url_empty_query_and_fragment() -> None: validator = validate.URL(relative=False) assert validator('https://example.com?') == 'https://example.com?' assert validator('https://example.com?#frag') == 'https://example.com?#frag'"
+      ],
+      "syntax_errors_detected": 2,
+      "syntax_repairs_attempted": 1,
+      "syntax_recovered": false,
+      "syntax_gate_interventions": [
+        {
+          "attempt": 3,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_validate.py: line 1, column 251: unterminated string literal (detected at line 1). Text: def test_url_fragment_after_empty_path() -> None: validator = validate.URL(relative=False) assert validator('https://example.com#frag') == 'https://example.com#frag' assert validator('https://example.com#') == 'https://example.com#' assert validator('https",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_validate.py: line 1, column 91: invalid syntax. Text: def test_url_empty_query_and_fragment() -> None: validator = validate.URL(relative=False) assert validator('https://example.com?') == 'https://example.com?' assert validator('https://example.com?#frag') == 'https://example.com?#frag'"
+          ]
+        }
+      ],
+      "scaffold_active": true,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[json_schema_error] Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 0,
+          "prompt_tokens": 12240,
+          "completion_tokens": 4096,
+          "latency_ms": 7154.14,
+          "output_length_chars": 14645,
+          "is_truncated": true,
+          "raw_output_snippet": "Let me analyze the issue:\n\nThe issue is that `validate.URL` rejects an absolute URL whose fragment follows an empty path with no query (e.g., 'https://example.com#frag'). The problem is that the regex"
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": false,
+          "errors": [
+            "[json_schema_error] Failed to parse model output as valid ImplementationPlan JSON: Expecting value: line 1 column 1 (char 0)"
+          ],
+          "error_count": 1,
+          "syntax_error_count": 0,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "latency_ms": 10964.37,
+          "output_length_chars": 0,
+          "is_truncated": true,
+          "raw_output_snippet": ""
+        },
+        {
+          "attempt_number": 3,
+          "is_valid": false,
+          "errors": [
+            "[hallucinated_symbol] Step 'step-1' references non-existent symbol 'URL.RegexMemoizer._regex_generator' in file 'src/marshmallow/validate.py'.",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_validate.py: line 1, column 251: unterminated string literal (detected at line 1). Text: def test_url_fragment_after_empty_path() -> None: validator = validate.URL(relative=False) assert validator('https://example.com#frag') == 'https://example.com#frag' assert validator('https://example.com#') == 'https://example.com#' assert validator('https",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_validate.py: line 1, column 91: invalid syntax. Text: def test_url_empty_query_and_fragment() -> None: validator = validate.URL(relative=False) assert validator('https://example.com?') == 'https://example.com?' assert validator('https://example.com?#frag') == 'https://example.com?#frag'"
+          ],
+          "error_count": 3,
+          "syntax_error_count": 2,
+          "prompt_tokens": 16612,
+          "completion_tokens": 1803,
+          "latency_ms": 10480.53,
+          "output_length_chars": 6130,
+          "is_truncated": false,
+          "raw_output_snippet": "{\n  \"plan_id\": \"fix-url-fragment-validation\",\n  \"issue_id\": \"REAL-MARSHMALLOW-03\",\n  \"summary\": \"Fix URL validator to accept fragments after empty path (e.g., 'https://example.com#frag')\",\n  \"rational"
+        }
+      ]
+    },
+    "execution_metrics": null,
+    "duration_seconds": 196.109,
+    "error_message": "Planner failed to generate valid plan: (PlanValidationError(step_id='step-1', field='target_symbol', error_type='hallucinated_symbol', message=\"Step 'step-1' references non-existent symbol 'URL.RegexMemoizer._regex_generator' in file 'src/marshmallow/validate.py'.\"), PlanValidationError(step_id='step-2', field='content', error_type='syntax_error', message=\"Syntactically invalid Python generated for tests/test_validate.py: line 1, column 251: unterminated string literal (detected at line 1). Text: def test_url_fragment_after_empty_path() -> None: validator = validate.URL(relative=False) assert validator('https://example.com#frag') == 'https://example.com#frag' assert validator('https://example.com#') == 'https://example.com#' assert validator('https\"), PlanValidationError(step_id='step-3', field='content', error_type='syntax_error', message=\"Syntactically invalid Python generated for tests/test_validate.py: line 1, column 91: invalid syntax. Text: def test_url_empty_query_and_fragment() -> None: validator = validate.URL(relative=False) assert validator('https://example.com?') == 'https://example.com?' assert validator('https://example.com?#frag') == 'https://example.com?#frag'\"))"
+  },
+  {
+    "case_id": "REAL-MARSHMALLOW-04",
+    "repository": "marshmallow-code/marshmallow",
+    "parent_commit_sha": "3265c13945a9533f9a3ade8d47eb9b32412c4c27",
+    "reference_commit_sha": "ec2178c26b1a0b46e162a48a4aa5fd9840c0de59",
+    "model_name": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "is_resolved": false,
+    "failure_category": "exec_representation_failure",
+    "scaffold_telemetry": {
+      "scaffold_enabled": true,
+      "attempts_executed": 2,
+      "repair_turns_used": 1,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_allows_none(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True) # Should not raise assert field.deserialize(None) is EnumWithNone.b # Explicitly",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_symbol_none_member_rejects_none(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=False) with pytest.raises(ValidationError, match='Field may not be null.'): field.d",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_explicit_allow_none_false(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True, allow_none=False) with pytest.raises(ValidationError, match='Field",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_serialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_serialization(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True) # Serialize the None member obj = type('Obj', (), {'val': EnumWithNone.b})()"
+          ],
+          "error_count": 4,
+          "syntax_error_count": 4,
+          "prompt_tokens": 12056,
+          "completion_tokens": 2998,
+          "latency_ms": 7266.17,
+          "output_length_chars": 7574,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-REAL-MARSHMALLOW-04\", \"issue_id\": \"REAL-MARSHMALLOW-04\", \"summary\": \"Modify Enum field to default allow_none=True when by_value is enabled and enum has a None value member\", \"rationa"
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": true,
+          "errors": [],
+          "error_count": 0,
+          "syntax_error_count": 0,
+          "prompt_tokens": 16471,
+          "completion_tokens": 2074,
+          "latency_ms": 11260.15,
+          "output_length_chars": 7566,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-REAL-MARSHMALLOW-04\", \"issue_id\": \"REAL-MARSHMALLOW-04\", \"summary\": \"Modify Enum field to default allow_none=True when by_value is enabled and enum has a None value member\", \"rationa"
+        }
+      ]
+    },
+    "syntax_gate_telemetry": {
+      "syntax_gate_enabled": true,
+      "syntax_errors_detected": 4,
+      "syntax_repairs_attempted": 1,
+      "syntax_recovered": true,
+      "syntax_gate_interventions": [
+        {
+          "attempt": 1,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_allows_none(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True) # Should not raise assert field.deserialize(None) is EnumWithNone.b # Explicitly",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_symbol_none_member_rejects_none(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=False) with pytest.raises(ValidationError, match='Field may not be null.'): field.d",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_explicit_allow_none_false(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True, allow_none=False) with pytest.raises(ValidationError, match='Field",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_serialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_serialization(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True) # Serialize the None member obj = type('Obj', (), {'val': EnumWithNone.b})()"
+          ]
+        }
+      ]
+    },
+    "retrieval_metrics": {
+      "total_retrieved": 30,
+      "retrieved_files": [
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_serialization.py",
+        "tests/test_serialization.py",
+        "src/marshmallow/fields.py",
+        "src/marshmallow/fields.py",
+        "tests/test_decorators.py",
+        "tests/test_decorators.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_deserialization.py",
+        "tests/test_schema.py",
+        "tests/test_serialization.py",
+        "tests/__init__.py",
+        "tests/conftest.py",
+        "tests/foo_serializer.py",
+        "tests/mypy_test_cases/test_class_registry.py",
+        "tests/mypy_test_cases/test_schema.py"
+      ],
+      "first_relevant_rank": 10,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "mrr": 0.1
+    },
+    "planning_metrics": {
+      "is_valid": true,
+      "total_attempts": 2,
+      "errors": [],
+      "syntax_errors_detected": 4,
+      "syntax_repairs_attempted": 1,
+      "syntax_recovered": true,
+      "syntax_gate_interventions": [
+        {
+          "attempt": 1,
+          "syntax_errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_allows_none(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True) # Should not raise assert field.deserialize(None) is EnumWithNone.b # Explicitly",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_symbol_none_member_rejects_none(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=False) with pytest.raises(ValidationError, match='Field may not be null.'): field.d",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_explicit_allow_none_false(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True, allow_none=False) with pytest.raises(ValidationError, match='Field",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_serialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_serialization(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True) # Serialize the None member obj = type('Obj', (), {'val': EnumWithNone.b})()"
+          ]
+        }
+      ],
+      "scaffold_active": true,
+      "attempt_details": [
+        {
+          "attempt_number": 1,
+          "is_valid": false,
+          "errors": [
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_allows_none(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True) # Should not raise assert field.deserialize(None) is EnumWithNone.b # Explicitly",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_symbol_none_member_rejects_none(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=False) with pytest.raises(ValidationError, match='Field may not be null.'): field.d",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_deserialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_explicit_allow_none_false(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True, allow_none=False) with pytest.raises(ValidationError, match='Field",
+            "[syntax_error] Syntactically invalid Python generated for tests/test_serialization.py: line 1, column 4: unexpected indent. Text: def test_enum_field_by_value_none_member_serialization(self): from enum import Enum class EnumWithNone(Enum): a = 1 b = None field = fields.Enum(EnumWithNone, by_value=True) # Serialize the None member obj = type('Obj', (), {'val': EnumWithNone.b})()"
+          ],
+          "error_count": 4,
+          "syntax_error_count": 4,
+          "prompt_tokens": 12056,
+          "completion_tokens": 2998,
+          "latency_ms": 7266.17,
+          "output_length_chars": 7574,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-REAL-MARSHMALLOW-04\", \"issue_id\": \"REAL-MARSHMALLOW-04\", \"summary\": \"Modify Enum field to default allow_none=True when by_value is enabled and enum has a None value member\", \"rationa"
+        },
+        {
+          "attempt_number": 2,
+          "is_valid": true,
+          "errors": [],
+          "error_count": 0,
+          "syntax_error_count": 0,
+          "prompt_tokens": 16471,
+          "completion_tokens": 2074,
+          "latency_ms": 11260.15,
+          "output_length_chars": 7566,
+          "is_truncated": false,
+          "raw_output_snippet": "{\"plan_id\": \"plan-REAL-MARSHMALLOW-04\", \"issue_id\": \"REAL-MARSHMALLOW-04\", \"summary\": \"Modify Enum field to default allow_none=True when by_value is enabled and enum has a None value member\", \"rationa"
+        }
+      ]
+    },
+    "execution_metrics": {
+      "status": "rolled_back",
+      "rolled_back": true,
+      "changes_count": 0,
+      "verifications_count": 0,
+      "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/marshmallow/fields.py'."
+    },
+    "duration_seconds": 129.58,
+    "error_message": "Step 'step-1' failed during execution: Step 'step-1': search_content was not found in 'src/marshmallow/fields.py'."
+  }
+]
