@@ -58,8 +58,12 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--require-reproduction", action="store_true", help="Fail-closed if candidate test passes pre-patch")
     run_parser.add_argument("--mutation-testing", action="store_true", help="Run AST mutation assertion strength checks")
     run_parser.add_argument("--open-pr", action="store_true", help="Generate GitHub PR payload and branch with VerificationCertificate")
-    run_parser.add_argument("--submit-pr", action="store_true", help="Directly submit PR via GitHub API (consumes GITHUB_TOKEN)")
-    run_parser.add_argument("--provider", default=None, choices=["openrouter", "ollama", "openai", "custom"], help="LLM Provider (default: openrouter or auto-detect)")
+    run_parser.add_argument(
+        "--provider",
+        default=None,
+        choices=["openrouter", "openai", "anthropic", "ollama", "groq", "deepseek", "mistral", "gemini", "custom"],
+        help="LLM Provider backend (default: auto-detected from environment variables)",
+    )
     run_parser.add_argument("--api-base", default=None, help="Custom LLM API Base URL (e.g. http://localhost:11434/v1 for Ollama)")
     run_parser.add_argument("--model", default=None, help="Target LLM model name")
     run_parser.add_argument("--out-dir", default=None, help="Optional output directory for artifacts")
@@ -207,34 +211,81 @@ def cmd_run(args: argparse.Namespace) -> int:
 
     # Initialize LLM planner if credentials or local endpoints are specified
     planner = None
-    provider = args.provider
+    provider = (args.provider or "").lower()
     openrouter_key = os.environ.get("OPENROUTER_API_KEY")
     openai_key = os.environ.get("OPENAI_API_KEY")
+    anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
+    groq_key = os.environ.get("GROQ_API_KEY")
+    deepseek_key = os.environ.get("DEEPSEEK_API_KEY")
+    mistral_key = os.environ.get("MISTRAL_API_KEY")
+    gemini_key = os.environ.get("GEMINI_API_KEY")
 
     api_base: str | None = args.api_base
     api_key: str = ""
     model_name: str | None = args.model
 
+    from autonomous_engineer.agents.llm_client import HttpLLMClient, LLMConfig, LLMProviderProfile
+    from autonomous_engineer.agents.planner import LLMPlanner
+
+    # 1. Ollama (Local)
     if provider == "ollama" or (api_base and "11434" in api_base):
-        api_base = api_base or "http://localhost:11434/v1"
-        model_name = model_name or "llama3.1:latest"
+        api_base = api_base or LLMProviderProfile.DEFAULT_ENDPOINTS["ollama"]
+        model_name = model_name or LLMProviderProfile.DEFAULT_MODELS["ollama"]
         api_key = "ollama"
+        provider = "ollama"
         print(f"  Live LLM Provider: Local Ollama ({model_name} @ {api_base})")
+    # 2. Anthropic
+    elif provider == "anthropic" or (not provider and anthropic_key and not (openrouter_key or openai_key)):
+        api_base = api_base or LLMProviderProfile.DEFAULT_ENDPOINTS["anthropic"]
+        api_key = anthropic_key or os.environ.get("ANTHROPIC_API_KEY", "")
+        model_name = model_name or LLMProviderProfile.DEFAULT_MODELS["anthropic"]
+        provider = "anthropic"
+        print(f"  Live LLM Provider: Anthropic ({model_name})")
+    # 3. Groq (Ultra-Low Latency Inference)
+    elif provider == "groq" or (not provider and groq_key and not (openrouter_key or openai_key)):
+        api_base = api_base or LLMProviderProfile.DEFAULT_ENDPOINTS["groq"]
+        api_key = groq_key or os.environ.get("GROQ_API_KEY", "")
+        model_name = model_name or LLMProviderProfile.DEFAULT_MODELS["groq"]
+        provider = "groq"
+        print(f"  Live LLM Provider: Groq Fast LPU ({model_name})")
+    # 4. DeepSeek
+    elif provider == "deepseek" or (not provider and deepseek_key and not (openrouter_key or openai_key)):
+        api_base = api_base or LLMProviderProfile.DEFAULT_ENDPOINTS["deepseek"]
+        api_key = deepseek_key or os.environ.get("DEEPSEEK_API_KEY", "")
+        model_name = model_name or LLMProviderProfile.DEFAULT_MODELS["deepseek"]
+        provider = "deepseek"
+        print(f"  Live LLM Provider: DeepSeek ({model_name})")
+    # 5. Mistral AI
+    elif provider == "mistral" or (not provider and mistral_key and not (openrouter_key or openai_key)):
+        api_base = api_base or LLMProviderProfile.DEFAULT_ENDPOINTS["mistral"]
+        api_key = mistral_key or os.environ.get("MISTRAL_API_KEY", "")
+        model_name = model_name or LLMProviderProfile.DEFAULT_MODELS["mistral"]
+        provider = "mistral"
+        print(f"  Live LLM Provider: Mistral AI ({model_name})")
+    # 6. Google Gemini
+    elif provider == "gemini" or (not provider and gemini_key and not (openrouter_key or openai_key)):
+        api_base = api_base or LLMProviderProfile.DEFAULT_ENDPOINTS["gemini"]
+        api_key = gemini_key or os.environ.get("GEMINI_API_KEY", "")
+        model_name = model_name or LLMProviderProfile.DEFAULT_MODELS["gemini"]
+        provider = "gemini"
+        print(f"  Live LLM Provider: Google Gemini ({model_name})")
+    # 7. OpenAI
     elif provider == "openai" or (not provider and openai_key and not openrouter_key):
-        api_base = api_base or "https://api.openai.com/v1"
+        api_base = api_base or LLMProviderProfile.DEFAULT_ENDPOINTS["openai"]
         api_key = openai_key or ""
-        model_name = model_name or "gpt-4o"
+        model_name = model_name or LLMProviderProfile.DEFAULT_MODELS["openai"]
+        provider = "openai"
         print(f"  Live LLM Provider: OpenAI ({model_name})")
+    # 8. OpenRouter (Multi-Model Gateway)
     elif openrouter_key or provider == "openrouter":
-        api_base = api_base or "https://openrouter.ai/api/v1"
+        api_base = api_base or LLMProviderProfile.DEFAULT_ENDPOINTS["openrouter"]
         api_key = openrouter_key or ""
-        model_name = model_name or os.environ.get("OPENROUTER_MODEL", "nvidia/nemotron-3-super-120b-a12b:free")
+        model_name = model_name or os.environ.get("OPENROUTER_MODEL", LLMProviderProfile.DEFAULT_MODELS["openrouter"])
+        provider = "openrouter"
         print(f"  Live LLM Provider: OpenRouter ({model_name})")
 
     if api_base:
-        from autonomous_engineer.agents.llm_client import HttpLLMClient, LLMConfig
-        from autonomous_engineer.agents.planner import LLMPlanner
-        client = HttpLLMClient(api_base_url=api_base, api_key=api_key)
+        client = HttpLLMClient(api_base_url=api_base, api_key=api_key, provider=provider)
         planner_cfg = LLMConfig(model=model_name or "default", temperature=0.0)
         planner = LLMPlanner(llm_client=client, config=planner_cfg)
 

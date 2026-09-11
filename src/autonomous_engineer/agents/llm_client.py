@@ -133,19 +133,58 @@ class MockLLMClient:
             )
 
 
+class LLMProviderProfile:
+    """Predefined endpoint and header profiles for popular LLM backends."""
+
+    OPENROUTER = "openrouter"
+    OPENAI = "openai"
+    ANTHROPIC = "anthropic"
+    OLLAMA = "ollama"
+    GROQ = "groq"
+    DEEPSEEK = "deepseek"
+    MISTRAL = "mistral"
+    GEMINI = "gemini"
+
+    DEFAULT_ENDPOINTS = {
+        "openrouter": "https://openrouter.ai/api/v1",
+        "openai": "https://api.openai.com/v1",
+        "anthropic": "https://api.anthropic.com/v1",
+        "ollama": "http://localhost:11434/v1",
+        "groq": "https://api.groq.com/openai/v1",
+        "deepseek": "https://api.deepseek.com/v1",
+        "mistral": "https://api.mistral.ai/v1",
+        "gemini": "https://generativelanguage.googleapis.com/v1beta/openai",
+    }
+
+    DEFAULT_MODELS = {
+        "openrouter": "anthropic/claude-3.5-sonnet",
+        "openai": "gpt-4o",
+        "anthropic": "claude-3-5-sonnet-20241022",
+        "ollama": "llama3.1:latest",
+        "groq": "llama-3.3-70b-versatile",
+        "deepseek": "deepseek-chat",
+        "mistral": "mistral-large-latest",
+        "gemini": "gemini-1.5-pro",
+    }
+
+
 class HttpLLMClient:
     """
-    Zero-dependency HTTP client for OpenAI-compatible /chat/completions endpoints.
-    Uses standard library urllib.request.
+    Zero-dependency HTTP client for LLM providers.
+    Supports OpenRouter, OpenAI, Anthropic, Ollama, Groq, DeepSeek, Mistral, and Gemini.
     """
 
     def __init__(
         self,
         api_base_url: str = "https://api.openai.com/v1",
         api_key: str = "",
+        provider: str = "openai",
+        extra_headers: dict[str, str] | None = None,
     ) -> None:
         self._api_base_url = api_base_url.rstrip("/")
         self._api_key = api_key
+        self._provider = provider.lower()
+        self._extra_headers = extra_headers or {}
 
     def generate(
         self,
@@ -153,7 +192,11 @@ class HttpLLMClient:
         config: LLMConfig,
         response_schema: type[BaseModel] | None = None,
     ) -> LLMResponse:
-        """Execute chat completion request with JSON response formatting."""
+        """Execute chat completion request with JSON response formatting and retry backoff."""
+        is_anthropic_native = self._provider == "anthropic" and "anthropic.com" in self._api_base_url
+        if is_anthropic_native:
+            return self._generate_anthropic(messages, config, response_schema)
+
         endpoint = f"{self._api_base_url}/chat/completions"
 
         payload: dict[str, Any] = {
@@ -162,7 +205,7 @@ class HttpLLMClient:
             "temperature": config.temperature,
         }
 
-        if config.seed is not None:
+        if config.seed is not None and self._provider not in ("anthropic", "gemini"):
             payload["seed"] = config.seed
         if config.max_tokens is not None:
             payload["max_tokens"] = config.max_tokens
@@ -183,10 +226,88 @@ class HttpLLMClient:
 
         headers = {
             "Content-Type": "application/json",
+            "User-Agent": "QuetZ-Autonomous-Engineer/1.0",
         }
         if self._api_key:
             headers["Authorization"] = f"Bearer {self._api_key}"
 
+        # Provider-specific headers
+        if self._provider == "openrouter":
+            headers["HTTP-Referer"] = "https://github.com/Aniketkoppaka/QuetZ"
+            headers["X-Title"] = "QuetZ Autonomous Software Engineer"
+
+        headers.update(self._extra_headers)
+
+        data_bytes = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(endpoint, data=data_bytes, headers=headers, method="POST")
+
+        max_attempts = 3
+        last_err: Exception | None = None
+
+        for attempt in range(1, max_attempts + 1):
+            start_time = time.perf_counter()
+            try:
+                with urllib.request.urlopen(req, timeout=config.timeout_seconds) as response:
+                    latency_ms = round((time.perf_counter() - start_time) * 1000, 2)
+                    resp_json = json.loads(response.read().decode("utf-8"))
+                    choice = resp_json.get("choices", [{}])[0]
+                    content = choice.get("message", {}).get("content", "")
+                    usage = resp_json.get("usage", {})
+                    return LLMResponse(
+                        content=content,
+                        model=resp_json.get("model", config.model),
+                        usage=usage,
+                        latency_ms=latency_ms,
+                        raw_response=resp_json,
+                    )
+            except urllib.error.HTTPError as e:
+                last_err = e
+                err_body = e.read().decode("utf-8", errors="replace")
+                # Retry on rate-limits (429) or transient server errors (500, 502, 503, 504)
+                if e.code in (429, 500, 502, 503, 504) and attempt < max_attempts:
+                    time.sleep(attempt * 1.5)
+                    continue
+                raise RuntimeError(f"HTTP LLM request failed with status {e.code}: {err_body}") from e
+            except Exception as e:
+                last_err = e
+                if attempt < max_attempts:
+                    time.sleep(attempt * 1.0)
+                    continue
+                raise RuntimeError(f"LLM request error: {e}") from e
+
+        raise RuntimeError(f"LLM request failed after {max_attempts} attempts: {last_err}")
+
+    def _generate_anthropic(
+        self,
+        messages: list[LLMMessage] | tuple[LLMMessage, ...],
+        config: LLMConfig,
+        response_schema: type[BaseModel] | None = None,
+    ) -> LLMResponse:
+        """Native Anthropic Messages API handler."""
+        endpoint = f"{self._api_base_url}/messages"
+        system_content = ""
+        anthropic_msgs = []
+
+        for m in messages:
+            if m.role == "system":
+                system_content += f"\n{m.content}"
+            else:
+                anthropic_msgs.append({"role": m.role, "content": m.content})
+
+        payload: dict[str, Any] = {
+            "model": config.model,
+            "messages": anthropic_msgs,
+            "max_tokens": config.max_tokens or 4096,
+            "temperature": config.temperature,
+        }
+        if system_content.strip():
+            payload["system"] = system_content.strip()
+
+        headers = {
+            "x-api-key": self._api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+        }
         data_bytes = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(endpoint, data=data_bytes, headers=headers, method="POST")
 
@@ -195,8 +316,12 @@ class HttpLLMClient:
             with urllib.request.urlopen(req, timeout=config.timeout_seconds) as response:
                 latency_ms = round((time.perf_counter() - start_time) * 1000, 2)
                 resp_json = json.loads(response.read().decode("utf-8"))
-                choice = resp_json.get("choices", [{}])[0]
-                content = choice.get("message", {}).get("content", "")
+                text_blocks = [
+                    block.get("text", "")
+                    for block in resp_json.get("content", [])
+                    if block.get("type") == "text"
+                ]
+                content = "".join(text_blocks)
                 usage = resp_json.get("usage", {})
                 return LLMResponse(
                     content=content,
@@ -207,6 +332,6 @@ class HttpLLMClient:
                 )
         except urllib.error.HTTPError as e:
             err_body = e.read().decode("utf-8", errors="replace")
-            raise RuntimeError(f"HTTP LLM request failed with status {e.code}: {err_body}") from e
+            raise RuntimeError(f"Anthropic API failed with status {e.code}: {err_body}") from e
         except Exception as e:
-            raise RuntimeError(f"LLM request error: {e}") from e
+            raise RuntimeError(f"Anthropic API request error: {e}") from e

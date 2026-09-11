@@ -46,18 +46,32 @@ Export SOC2/ISO compliance and security audit report:
 python -m autonomous_engineer export-audit --output artifacts/enterprise_audit.md
 ```
 
-Run end-to-end autonomous resolution with Local Ollama:
+Run end-to-end autonomous resolution with your preferred LLM:
 ```bash
+# 1. Local Ollama (Offline / Air-gapped / Free)
 python -m autonomous_engineer run \
-  --repo https://github.com/owner/repo \
-  --title "Fix ZeroDivisionError in calculation" \
-  --body "safe_divide crashes when divisor b is 0. Should return 0.0." \
-  --provider ollama \
-  --model llama3.1 \
-  --reproduce-cmd "pytest -k test_zero_division" \
-  --require-reproduction \
-  --mutation-testing \
-  --submit-pr
+  --repo . --title "Fix bug" --body "Details" \
+  --provider ollama --model llama3.1
+
+# 2. Groq (Ultra-Low Latency Inference)
+python -m autonomous_engineer run \
+  --repo . --title "Fix bug" --body "Details" \
+  --provider groq --model llama-3.3-70b-versatile
+
+# 3. Anthropic (Claude 3.5 Sonnet)
+python -m autonomous_engineer run \
+  --repo . --title "Fix bug" --body "Details" \
+  --provider anthropic --model claude-3-5-sonnet-20241022
+
+# 4. DeepSeek
+python -m autonomous_engineer run \
+  --repo . --title "Fix bug" --body "Details" \
+  --provider deepseek --model deepseek-chat
+
+# 5. OpenRouter / OpenAI / Mistral / Google Gemini
+python -m autonomous_engineer run \
+  --repo . --title "Fix bug" --body "Details" \
+  --provider openrouter --model anthropic/claude-3.5-sonnet
 ```
 
 Run live benchmark validation suite:

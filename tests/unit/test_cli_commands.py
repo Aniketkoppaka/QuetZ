@@ -108,3 +108,27 @@ def test_cli_export_audit_markdown(tmp_path):
     assert "Enterprise Compliance & Security Audit Report" in content
     assert "Static Application Security Testing" in content
     assert "Supply-Chain License Compliance" in content
+
+
+def test_cli_provider_profiles_and_flags():
+    from autonomous_engineer.cli import build_parser
+    parser = build_parser()
+    args = parser.parse_args([
+        "run",
+        "--repo", ".",
+        "--title", "Test Title",
+        "--body", "Test Body",
+        "--provider", "groq",
+        "--model", "llama-3.3-70b-versatile",
+    ])
+    assert args.provider == "groq"
+    assert args.model == "llama-3.3-70b-versatile"
+
+    args_ollama = parser.parse_args([
+        "run",
+        "--repo", ".",
+        "--title", "Test Title",
+        "--body", "Test Body",
+        "--provider", "ollama",
+    ])
+    assert args_ollama.provider == "ollama"
