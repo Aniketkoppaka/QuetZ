@@ -2,272 +2,278 @@
 
 > *Named after Quetzalcoatl, the Mesoamerican deity of wisdom, learning, and wind.*
 
-A production-grade, verifiable, fail-closed autonomous software engineering agent that resolves GitHub issues end-to-end under deterministic safety constraints.
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://img.shields.io/badge/tests-517%20passed-brightgreen.svg)]()
+[![Coverage](https://img.shields.io/badge/coverage-85%25-green.svg)]()
+[![Security SAST](https://img.shields.io/badge/sast-fail--closed-red.svg)]()
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-> **Status: Production Architecture Complete (514 Passing Tests).**  
-> Features full AST repository mapping, 4-tier fuzzy anchor editing, fail-then-pass reproduction verification, semantic AST blast-radius analysis, mutation testing, proof-carrying verification certificates with Ed25519/HMAC cryptographic signing, independent code review, direct automated GitHub PR delivery, interactive Chat-Centric Engineering Control Console, AST SAST scanner, copyleft license scanner, Bayesian confidence tuner, polyglot analysis (Python, JS/TS, Go, Rust), local Ollama/OpenAI/OpenRouter LLM provider routing, reusable GitHub Action, and automated SOC2 enterprise compliance exporter.
+QuetZ is a production-grade, verifiable, fail-closed autonomous software engineering harness that resolves real-world software engineering issues end-to-end under deterministic safety constraints.
 
----
-
-## Quickstart (CLI & Console)
-
-Launch the **QuetZ Engineering Control Console**:
-```bash
-python -m autonomous_engineer ui --port 8080
-```
-
-Inspect system capabilities and security policies:
-```bash
-python -m autonomous_engineer audit
-```
-
-List registered engineering playbooks:
-```bash
-python -m autonomous_engineer skills
-```
-
-Run AST static application security scan (SAST):
-```bash
-python -m autonomous_engineer scan-security src/
-```
-
-Run supply-chain copyleft license audit:
-```bash
-python -m autonomous_engineer scan-licenses requirements.txt
-```
-
-Display aggregated KPI telemetry & resolution fidelity metrics:
-```bash
-python -m autonomous_engineer metrics
-```
-
-Export SOC2/ISO compliance and security audit report:
-```bash
-python -m autonomous_engineer export-audit --output artifacts/enterprise_audit.md
-```
-
-Run end-to-end autonomous resolution with your preferred LLM:
-```bash
-# 1. Local Ollama (Offline / Air-gapped / Free)
-python -m autonomous_engineer run \
-  --repo . --title "Fix bug" --body "Details" \
-  --provider ollama --model llama3.1
-
-# 2. Groq (Ultra-Low Latency Inference)
-python -m autonomous_engineer run \
-  --repo . --title "Fix bug" --body "Details" \
-  --provider groq --model llama-3.3-70b-versatile
-
-# 3. Anthropic (Claude 3.5 Sonnet)
-python -m autonomous_engineer run \
-  --repo . --title "Fix bug" --body "Details" \
-  --provider anthropic --model claude-3-5-sonnet-20241022
-
-# 4. DeepSeek
-python -m autonomous_engineer run \
-  --repo . --title "Fix bug" --body "Details" \
-  --provider deepseek --model deepseek-chat
-
-# 5. OpenRouter / OpenAI / Mistral / Google Gemini
-python -m autonomous_engineer run \
-  --repo . --title "Fix bug" --body "Details" \
-  --provider openrouter --model anthropic/claude-3.5-sonnet
-```
-
-Run live benchmark validation suite:
-```bash
-python scripts/run_pipeline_benchmark.py
-```
-
-For the comprehensive technical whitepaper, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Unlike open-ended coding assistants that execute unconstrained code or hallucinate patch success, QuetZ is built on **verifiable state machines, AST syntactic invariant parsing, multi-tier anchor editing, fail-then-pass reproduction testing, cryptographic provenance signing, and organizational policy enforcement**.
 
 ---
 
-## Scope (Explicitly Bounded)
+## Key Capabilities & Architectural Highlights
 
-The system is intentionally constrained to:
-
-- **Python** repositories
-- **GitHub**-based workflows
-- **Small-to-medium** repositories
-- **Well-defined** software-engineering issues
-- **pytest**-compatible projects where practical
-- **Controlled** execution environments
-- **Bounded** repair iterations
-
-Do not expand scope without explicit approval.
+- 🛡️ **Fail-Closed AST Verification**: Every code modification is parsed into concrete syntax trees. Non-syntactic changes, syntax errors, or policy violations are rejected with automatic, atomic workspace rollback.
+- 🎯 **Deterministic 4-Tier Anchor File Editing**: Replaces brittle line numbers and raw regex with Exact Match, Whitespace-Normalized, AST Symbol-Scoped, and High-Confidence Fuzzy Anchor matching.
+- 🧪 **Fail-Then-Pass Reproduction Engine**: Verifies that a reproduction candidate test actually *fails* on the unpatched codebase (confirming bug reproduction) before verifying that it *passes* post-patch.
+- 💥 **Semantic Blast-Radius & Change-Impact Analysis**: Analyzes caller/callee graphs and symbol dependencies to calculate downstream blast radius and restrict mutation risk.
+- 🧬 **Mutation Assertion Strength Testing**: Injects AST mutation operators (operator swapping, return value negation, boundary alteration) into the target function to ensure test suites detect logic regressions.
+- 🔐 **Cryptographic Provenance & Tamper-Proof Certificates**: Signs all successful `VerificationCertificate` artifacts with HMAC-SHA256 digests and bit-flip tamper detection.
+- 🔍 **Static Application Security Testing (SAST)**: Built-in pure-syntactic AST security scanner checking for CWE-95 (`eval`/`exec`), CWE-78 (command injection in `subprocess`), CWE-502 (insecure `pickle`/`yaml`), CWE-798 (hardcoded API keys), and CWE-295 (disabled TLS verification).
+- 📜 **Supply-Chain & License Compliance Engine**: Audits `requirements.txt` and `pyproject.toml` dependencies with PEP 508 marker parsing and case-insensitive heuristics to block viral Copyleft/AGPL/SSPL licenses.
+- 🌐 **Polyglot Structural Code Analyzers**: Structural symbol indexers for **Python**, **TypeScript / JavaScript** (classes, methods, arrow properties), **Go** (with 1.18+ generic type parameters), and **Rust** (with trait implementations and `impl` blocks).
+- 🤖 **Universal Multi-Provider LLM Integration**: Zero third-party proprietary SDK requirements. Supports 8 backends: **Local Ollama** (offline/free), **Groq** (ultra-low latency LPU), **Anthropic** (Claude 3.5 Sonnet native Messages API), **DeepSeek**, **Google Gemini**, **Mistral AI**, **OpenAI**, and **OpenRouter** with automatic exponential retry backoff.
+- 📊 **Bayesian Feedback Calibration & KPI Telemetry**: Self-tuning adaptive trust weighting based on human review outcomes (`MERGED_AS_IS`, `MERGED_WITH_EDITS`, `REJECTED_OR_ABANDONED`) and structured JSONL run metrics.
+- 🖥️ **Interactive Engineering Control Console**: Browser-based web interface (`app.js`, `style.css`) providing real-time session execution inspection, chat interactions, live diagnostic telemetry, and run histories.
+- 🚀 **GitHub PR Delivery & CI/CD Integration**: Direct automated PR creation via GitHub REST API, reusable GitHub Action (`action.yml`), pre-commit hooks, and SOC2/ISO enterprise compliance exporter.
 
 ---
 
-## Intended High-Level Workflow
+## High-Level Autonomous Workflow
 
-```
-GitHub Issue
-    ↓
-Repository Acquisition   — clone & workspace setup
-    ↓
-Repository Understanding — file graph, key symbols, test inventory
-    ↓
-Code Retrieval           — locate relevant files/symbols for the issue
-    ↓
-Implementation Planning  — reason about required changes
-    ↓
-Controlled Code Modification — apply changes via bounded tool calls
-    ↓
-Sandboxed Execution      — run tests in an isolated Docker container
-    ↓
-Test / Check Results     — parse structured pass/fail output
-    ↓
-Failure Analysis + Bounded Repair Loop — diagnose and retry (capped iterations)
-    ↓
-Independent Review       — secondary agent validates the patch
-    ↓
-Final Verification       — confirm tests pass on clean checkout
-    ↓
-Patch / Pull Request     — submit result to GitHub
+```text
+               GitHub Issue / Problem Description
+                              ↓
+              Repository Acquisition & File Inventory
+                              ↓
+               AST Code Understanding & Symbol Mapping
+                              ↓
+               Engineering Playbook & Skill Matching
+                              ↓
+                Pre-Execution Policy & SAST Guardrails
+                              ↓
+          Reproduction Candidate Execution (Must FAIL)
+                              ↓
+           Implementation Planning (LLM Multi-Provider)
+                              ↓
+          Deterministic 4-Tier Anchor Code Modification
+                              ↓
+        Static AST Syntax Verification & Symbol Confirmation
+                              ↓
+           Test Suite Execution & Reproduction Verification (Must PASS)
+                              ↓
+        Mutation Strength Testing & Blast Radius Evaluation
+                              ↓
+              Independent Peer Review Agent Approval
+                              ↓
+        Cryptographic Signing of VerificationCertificate
+                              ↓
+            Direct GitHub Pull Request Delivery & Audit Export
 ```
 
 ---
 
-## Development Approach
+## Quickstart & CLI Reference
 
-Implementation is deliberate and incremental across numbered milestones:
+Both `autonomous-engineer` and `quetz` CLI binaries are installed and available.
 
-| Milestone | Focus |
-|-----------|-------|
-| **0** (current) | Project foundation, environment, structure, documentation |
-| 1 | Domain models, configuration system |
-| 2 | Repository acquisition and workspace management |
-| 3 | Code retrieval strategy |
-| 4 | LLM integration and planning agent |
-| 5 | Coding agent with controlled tool use |
-| 6 | Sandboxed execution engine |
-| 7 | Bounded repair loop |
-| 8 | Independent review agent |
-| 9 | GitHub integration and PR creation |
-| 10 | Evaluation harness and benchmarking |
-
-Each milestone is gated on a definition-of-done checklist before proceeding.
+### 1. Launch the Web Engineering Control Console
+```bash
+python -m autonomous_engineer ui --host 127.0.0.1 --port 8080
+# Or using the alias:
+quetz ui --port 8080
+```
+Open `http://localhost:8080` in your browser to inspect live workflows, past runs, and system summaries.
 
 ---
 
-## Development Principles
+### 2. Run Autonomous Issue Resolution
 
-| Principle | Meaning |
-|-----------|---------|
-| **Correctness over feature count** | Fewer, verified capabilities beat more, unreliable ones |
-| **Explicit state transitions** | Every phase has clear inputs, outputs, and preconditions |
-| **Controlled tools** | The agent interacts with the world only through declared, auditable tools |
-| **Sandboxed execution** | Code runs in isolated containers; the host system is never exposed |
-| **Bounded autonomous loops** | Repair iterations are capped; the system cannot loop indefinitely |
-| **Evidence-based verification** | Claims about pass/fail are grounded in actual test output |
-| **Reproducibility** | Given the same inputs, the system should produce deterministic, auditable outputs |
-| **Observability** | Every significant action is logged with structured, queryable output |
-| **Security** | Credentials are never committed; sandboxing limits blast radius |
+#### A. Run completely offline with Local Ollama (Air-Gapped / Free)
+```bash
+quetz run \
+  --repo . \
+  --title "Fix ZeroDivisionError in calculation" \
+  --body "safe_divide crashes when divisor b is 0. Should return 0.0." \
+  --provider ollama \
+  --model llama3.1 \
+  --reproduce-cmd "pytest -k test_zero_division" \
+  --require-reproduction \
+  --mutation-testing
+```
+
+#### B. Run with Groq (Ultra-Low Latency Inference)
+```bash
+export GROQ_API_KEY="gsk_..."
+quetz run \
+  --repo https://github.com/owner/repo \
+  --title "Fix race condition in session cleanup" \
+  --body "Session expiry leads to KeyError during concurrent disconnects" \
+  --provider groq \
+  --model llama-3.3-70b-versatile \
+  --submit-pr
+```
+
+#### C. Run with Anthropic (Claude 3.5 Sonnet)
+```bash
+export ANTHROPIC_API_KEY="sk-ant-..."
+quetz run \
+  --repo https://github.com/owner/repo \
+  --title "Add retry backoff for rate-limited requests" \
+  --body "Implement exponential backoff when encountering 429 status codes" \
+  --provider anthropic \
+  --model claude-3-5-sonnet-20241022
+```
+
+#### D. Run with OpenRouter, DeepSeek, or OpenAI
+```bash
+# OpenRouter (Default free/paid models)
+export OPENROUTER_API_KEY="sk-or-..."
+quetz run --repo . --title "Fix memory leak" --body "Unclosed file handles" --provider openrouter
+
+# DeepSeek
+export DEEPSEEK_API_KEY="sk-..."
+quetz run --repo . --title "Refactor query builder" --body "Optimize SQL joins" --provider deepseek
+
+# OpenAI
+export OPENAI_API_KEY="sk-..."
+quetz run --repo . --title "Update auth headers" --body "Support bearer tokens" --provider openai
+```
 
 ---
 
-## Local Setup
+### 3. Enterprise Security, Governance & Audit Commands
+
+#### Inspect System Capabilities & Security Policies
+```bash
+quetz audit
+```
+
+#### Run AST SAST Security Scan
+```bash
+quetz scan-security src/
+```
+
+#### Audit Dependencies for Copyleft / Prohibited Licenses
+```bash
+quetz scan-licenses requirements.txt
+# Or scan an entire project directory:
+quetz scan-licenses .
+```
+
+#### Export Enterprise Compliance Report (SOC2 / ISO Schema)
+```bash
+# JSON format
+quetz export-audit --path . --output artifacts/compliance_audit.json
+
+# Markdown executive summary
+quetz export-audit --path . --output artifacts/compliance_audit.md
+```
+
+#### Cryptographic Provenance: Sign and Verify Certificates
+```bash
+# Sign a verification certificate
+quetz sign-cert certificate.json --output certificate.signed.json --key "secret-key"
+
+# Verify signature integrity and detect tampering
+quetz verify-cert certificate.signed.json --key "secret-key"
+```
+
+#### Telemetry & Adaptive Confidence Tuning
+```bash
+# Display aggregated resolution KPIs
+quetz metrics
+
+# Calibrate confidence weights based on PR review outcome
+quetz feedback --pr-id "PR-101" --issue-id "ISSUE-42" --outcome MERGED_AS_IS
+```
+
+---
+
+## Supported LLM Providers
+
+QuetZ incorporates zero external proprietary SDK dependencies and provides unified JSON schema-enforced generations across 8 backends:
+
+| Provider Flag | Backend Target | Default Model | Custom API Base Override |
+|---|---|---|---|
+| `--provider ollama` | Local Ollama | `llama3.1:latest` | `--api-base http://localhost:11434/v1` |
+| `--provider groq` | Groq LPU Inference | `llama-3.3-70b-versatile` | `--api-base https://api.groq.com/openai/v1` |
+| `--provider anthropic` | Anthropic Messages API | `claude-3-5-sonnet-20241022`| `--api-base https://api.anthropic.com/v1` |
+| `--provider deepseek` | DeepSeek Platform | `deepseek-chat` | `--api-base https://api.deepseek.com/v1` |
+| `--provider gemini` | Google Gemini | `gemini-1.5-pro` | `--api-base https://generativelanguage.googleapis.com/v1beta/openai` |
+| `--provider mistral` | Mistral AI | `mistral-large-latest` | `--api-base https://api.mistral.ai/v1` |
+| `--provider openai` | OpenAI | `gpt-4o` | `--api-base https://api.openai.com/v1` |
+| `--provider openrouter`| OpenRouter Gateway | `anthropic/claude-3.5-sonnet`| `--api-base https://openrouter.ai/api/v1` |
+
+---
+
+## Local Development & Testing
 
 ### Prerequisites
-
 - Python 3.11+
-- `pip` (or `uv` / `pipx` for isolated installs)
-- Docker Desktop (required for sandboxed execution — later milestones only)
 - Git
+- Optional: Docker Desktop (for isolated sandbox container execution)
 
-### 1. Clone the repository
-
+### Installation
 ```bash
+# 1. Clone repository
 git clone https://github.com/Aniketkoppaka/QuetZ.git
 cd QuetZ
-```
 
-### 2. Create and activate a virtual environment
-
-```bash
+# 2. Setup virtual environment
 python -m venv .venv
-
-# Windows
+# On Windows:
 .venv\Scripts\activate
-
-# macOS / Linux
+# On Linux/macOS:
 source .venv/bin/activate
-```
 
-### 3. Install the package with development dependencies
-
-```bash
+# 3. Install development dependencies in editable mode
 pip install -e ".[dev]"
 ```
 
-### 4. Configure environment variables
+### Running the Test Suite
+QuetZ maintains a **100% passing test suite** with 517 tests covering all edge cases, AST parsing, polyglot analysis, and security rules:
 
 ```bash
-cp .env.example .env
-# Edit .env and fill in real values
-```
-
----
-
-## Running the Test Suite
-
-```bash
-# Run all tests
+# Run full test suite
 pytest
 
-# Run only unit tests
-pytest tests/unit/
+# Run fast with parallel workers (requires pytest-xdist)
+pytest -n auto
 
-# Run with coverage
+# Run test coverage audit
 pytest --cov=autonomous_engineer --cov-report=term-missing
 
-# Run a specific test file
-pytest tests/unit/test_package_import.py -v
+# Run deep edge-case stress battery
+pytest tests/unit/test_comprehensive_edge_cases.py -v
 ```
 
 ---
 
-## Project Layout
+## Project Structure
 
-```
+```text
 autonomous-software-engineer/
-├── README.md                     # This file
-├── pyproject.toml                # Python project + tool configuration
-├── .env.example                  # Environment variable documentation
-├── .gitignore
-├── docker/                       # Docker configuration (future milestones)
-├── docs/
-│   ├── architecture/             # Component architecture documents
-│   ├── decisions/                # Architectural decision records (ADRs)
-│   └── evaluation/               # Benchmark and evaluation documentation
-├── src/
-│   └── autonomous_engineer/      # Main Python package
-│       ├── config/               # Configuration loading
-│       ├── domain/               # Core data models
-│       ├── orchestration/        # Agent loop and coordination
-│       ├── repository/           # Repo cloning and workspace
-│       ├── retrieval/            # Code retrieval strategies
-│       ├── tools/                # Bounded tool definitions
-│       ├── execution/            # Sandboxed test execution
-│       ├── agents/               # LLM-backed agent implementations
-│       ├── github/               # GitHub API integration
-│       ├── review/               # Independent review agent
-│       ├── evaluation/           # Evaluation harness
-│       └── observability/        # Logging and tracing
-├── tests/
-│   ├── unit/                     # Fast, dependency-free tests
-│   ├── integration/              # Tests requiring external services
-│   └── fixtures/                 # Shared test data and helpers
-├── scripts/                      # Developer utility scripts
-└── examples/                     # Example inputs and usage
+├── action.yml                    # Reusable GitHub Action for CI/CD pipelines
+├── .pre-commit-hooks.yaml        # Pre-commit hook definitions
+├── pyproject.toml                # Package configuration, scripts, dependencies
+├── docker/                       # Isolated container sandbox environments
+│   └── sandbox/Dockerfile
+├── src/autonomous_engineer/      # Core QuetZ Platform
+│   ├── agents/                   # Multi-provider LLM clients, planner, validator
+│   ├── config/                   # Enterprise policy engine, project config loader
+│   ├── domain/                   # Data contracts, state machine, errors
+│   ├── execution/                # 4-tier file editor, preflight, docker runner, verifier
+│   ├── github/                   # PR bot, direct GitHub API delivery, webhooks
+│   ├── observability/            # Telemetry metrics, Bayesian adaptive tuner
+│   ├── orchestration/            # 12-phase finite state machine pipeline
+│   ├── repository/               # Polyglot analyzers (Go, Rust, JS/TS, Python)
+│   ├── retrieval/                # Structural BM25 lexical & AST retrieval
+│   ├── review/                   # Independent secondary reviewer agent
+│   ├── tools/                    # Gated engineering playbooks & capabilities
+│   ├── verification/             # Security SAST, license scanner, crypto signing
+│   └── web/                      # Control console web server & frontend assets
+│       ├── server.py
+│       └── static/ (index.html, style.css, app.js)
+└── tests/
+    └── unit/                     # 517 unit and integration tests
 ```
 
 ---
 
-## Contributing
+## Contributing & License
 
-Development proceeds milestone-by-milestone.  Each milestone has a
-definition-of-done checklist that must be satisfied before work on the
-next milestone begins.  See `docs/architecture/` for current design
-documentation.
+Distributed under the **MIT License**. Contributions, bug reports, and playbook expansions are welcome via Pull Requests. All contributions must pass full linting, AST verification, and the 517-test regression suite.
