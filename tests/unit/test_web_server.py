@@ -228,4 +228,40 @@ class TestWebServerHttpEndpoints:
             assert "updated_weights" in res
             assert res["updated_weights"]["w_verification"] > 0
 
+    def test_security_headers_applied(self, test_server: str) -> None:
+        req = urllib.request.urlopen(f"{test_server}/")
+        assert req.headers.get("X-Frame-Options") == "DENY"
+        assert req.headers.get("X-Content-Type-Options") == "nosniff"
+        assert "default-src 'self'" in req.headers.get("Content-Security-Policy", "")
+        assert "frame-ancestors 'none'" in req.headers.get("Content-Security-Policy", "")
+
+    def test_cross_origin_request_blocked(self, test_server: str) -> None:
+        payload = json.dumps({"title": "Malicious Session"}).encode("utf-8")
+        req = urllib.request.Request(
+            f"{test_server}/api/sessions",
+            data=payload,
+            headers={
+                "Content-Type": "application/json",
+                "Origin": "https://malicious-attacker-site.com"
+            },
+            method="POST"
+        )
+        with pytest.raises(urllib.error.HTTPError) as exc_info:
+            urllib.request.urlopen(req)
+        assert exc_info.value.code == 403
+
+    def test_oversized_payload_rejected_413(self, test_server: str) -> None:
+        req = urllib.request.Request(
+            f"{test_server}/api/sessions",
+            data=b"{}",
+            headers={
+                "Content-Type": "application/json",
+                "Content-Length": str(10 * 1024 * 1024)  # Claim 10 MB
+            },
+            method="POST"
+        )
+        with pytest.raises(urllib.error.HTTPError) as exc_info:
+            urllib.request.urlopen(req)
+        assert exc_info.value.code == 413
+
 

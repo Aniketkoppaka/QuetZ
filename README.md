@@ -3,7 +3,7 @@
 > *Named after Quetzalcoatl, the Mesoamerican deity of wisdom, learning, and wind.*
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-517%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-520%20passed-brightgreen.svg)]()
 [![Coverage](https://img.shields.io/badge/coverage-85%25-green.svg)]()
 [![Security SAST](https://img.shields.io/badge/sast-fail--closed-red.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -27,7 +27,7 @@ Unlike open-ended coding assistants that execute unconstrained code or hallucina
 - 🌐 **Polyglot Structural Code Analyzers**: Structural symbol indexers for **Python**, **TypeScript / JavaScript** (classes, methods, arrow properties), **Go** (with 1.18+ generic type parameters), and **Rust** (with trait implementations and `impl` blocks).
 - 🤖 **Universal Multi-Provider LLM Integration**: Zero third-party proprietary SDK requirements. Supports 8 backends: **Local Ollama** (offline/free), **Groq** (ultra-low latency LPU), **Anthropic** (Claude 3.5 Sonnet native Messages API), **DeepSeek**, **Google Gemini**, **Mistral AI**, **OpenAI**, and **OpenRouter** with automatic exponential retry backoff.
 - 📊 **Bayesian Feedback Calibration & KPI Telemetry**: Self-tuning adaptive trust weighting based on human review outcomes (`MERGED_AS_IS`, `MERGED_WITH_EDITS`, `REJECTED_OR_ABANDONED`) and structured JSONL run metrics.
-- 🖥️ **Interactive Engineering Control Console**: Browser-based web interface (`app.js`, `style.css`) providing real-time session execution inspection, chat interactions, live diagnostic telemetry, and run histories.
+- 🖥️ **Airtight Web Control Console**: Browser-based console fortified with strict **Content-Security-Policy (CSP)**, **X-Frame-Options: DENY**, **nosniff**, **same-origin CSRF validation**, and **5MB payload DoS clamping**.
 - 🚀 **GitHub PR Delivery & CI/CD Integration**: Direct automated PR creation via GitHub REST API, reusable GitHub Action (`action.yml`), pre-commit hooks, and SOC2/ISO enterprise compliance exporter.
 
 ---

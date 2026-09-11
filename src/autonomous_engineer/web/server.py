@@ -640,8 +640,38 @@ def get_agents_hierarchy() -> list[dict[str, Any]]:
     ]
 
 
+# Maximum allowed POST body (5 MB) to prevent memory exhaustion DoS
+MAX_PAYLOAD_BYTES = 5 * 1024 * 1024
+
+
 class ASEConsoleHandler(SimpleHTTPRequestHandler):
-    """HTTP request handler for the ASE Control Console."""
+    """HTTP request handler for the ASE Control Console with enterprise security hardening."""
+
+    def _apply_security_headers(self) -> None:
+        """Apply defensive HTTP security headers to all responses."""
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
+        self.send_header("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data:; "
+            "connect-src 'self'; "
+            "frame-ancestors 'none';"
+        )
+
+    def _is_origin_allowed(self) -> bool:
+        """Verify that Cross-Origin requests originate only from legitimate local console origins."""
+        origin = self.headers.get("Origin")
+        if not origin:
+            # Direct or non-browser client requests have no Origin header
+            return True
+        parsed = urlparse(origin)
+        allowed_hosts = ("127.0.0.1", "localhost", "0.0.0.0")
+        return parsed.hostname in allowed_hosts
 
     def do_GET(self) -> None:
         """Handle GET requests for static assets and REST API endpoints."""
@@ -826,6 +856,7 @@ class ASEConsoleHandler(SimpleHTTPRequestHandler):
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(target_file.stat().st_size))
             self.send_header("Cache-Control", "no-cache")
+            self._apply_security_headers()
             self.end_headers()
             with target_file.open("rb") as f:
                 self.wfile.write(f.read())
@@ -835,6 +866,7 @@ class ASEConsoleHandler(SimpleHTTPRequestHandler):
                 self.send_response(HTTPStatus.OK)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.send_header("Content-Length", str(index_file.stat().st_size))
+                self._apply_security_headers()
                 self.end_headers()
                 with index_file.open("rb") as f:
                     self.wfile.write(f.read())
@@ -843,10 +875,20 @@ class ASEConsoleHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self) -> None:
         """Handle POST requests for creating sessions or appending user chat messages."""
+        # 1. Same-Origin Validation
+        if not self._is_origin_allowed():
+            self._send_error(HTTPStatus.FORBIDDEN, "Cross-Origin request forbidden")
+            return
+
         parsed_url = urlparse(self.path)
         path = parsed_url.path
 
+        # 2. Max Payload Size Guard (Anti-DoS)
         content_length = int(self.headers.get("Content-Length", 0))
+        if content_length > MAX_PAYLOAD_BYTES:
+            self._send_error(HTTPStatus.REQUEST_ENTITY_TOO_LARGE, f"Payload exceeds {MAX_PAYLOAD_BYTES} bytes limit")
+            return
+
         post_data = self.rfile.read(content_length) if content_length > 0 else b"{}"
 
         try:
@@ -1028,12 +1070,12 @@ class ASEConsoleHandler(SimpleHTTPRequestHandler):
             }
 
     def _send_json(self, data: Any, status: int = 200) -> None:
-        """Send formatted JSON response with CORS headers."""
+        """Send formatted JSON response with defensive security headers."""
         body = json.dumps(data, indent=2).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self._apply_security_headers()
         self.end_headers()
         self.wfile.write(body)
 
