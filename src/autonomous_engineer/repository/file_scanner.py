@@ -54,6 +54,13 @@ CONFIG_PATTERNS: tuple[str, ...] = (
     "poetry.lock",
     "environment.yml",
     ".python-version",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "jest.config.js",
+    "jest.config.ts",
+    "vite.config.ts",
+    "vite.config.js",
 )
 
 

@@ -135,8 +135,27 @@ class ExecutionPolicy(BaseModel):
         description="Maximum wall-clock execution timeout in seconds",
     )
     allowed_test_commands: tuple[str, ...] = Field(
-        default=("pytest", "python -m pytest", "unittest", "python -m unittest"),
+        default=(
+            "pytest",
+            "python -m pytest",
+            "unittest",
+            "python -m unittest",
+            "npm test",
+            "yarn test",
+            "pnpm test",
+            "npx jest",
+            "jest",
+            "vitest",
+        ),
         description="Allowlisted verification command prefixes",
+    )
+    use_docker_sandbox: bool = Field(
+        default=False,
+        description="Whether to run test verifications inside an isolated Docker container",
+    )
+    docker_image: str = Field(
+        default="quetz-sandbox:latest",
+        description="Docker image tag to use for sandboxed execution",
     )
 
 

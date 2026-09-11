@@ -15,6 +15,13 @@ import sys
 import time
 from pathlib import Path
 
+# Ensure standard output can print Unicode characters safely across all platforms
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 from autonomous_engineer.domain.models import Issue, Repository
 from autonomous_engineer.domain.states import WorkflowPhase
 from autonomous_engineer.execution.models import Capability, ExecutionPolicy
@@ -51,6 +58,10 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--require-reproduction", action="store_true", help="Fail-closed if candidate test passes pre-patch")
     run_parser.add_argument("--mutation-testing", action="store_true", help="Run AST mutation assertion strength checks")
     run_parser.add_argument("--open-pr", action="store_true", help="Generate GitHub PR payload and branch with VerificationCertificate")
+    run_parser.add_argument("--submit-pr", action="store_true", help="Directly submit PR via GitHub API (consumes GITHUB_TOKEN)")
+    run_parser.add_argument("--provider", default=None, choices=["openrouter", "ollama", "openai", "custom"], help="LLM Provider (default: openrouter or auto-detect)")
+    run_parser.add_argument("--api-base", default=None, help="Custom LLM API Base URL (e.g. http://localhost:11434/v1 for Ollama)")
+    run_parser.add_argument("--model", default=None, help="Target LLM model name")
     run_parser.add_argument("--out-dir", default=None, help="Optional output directory for artifacts")
 
     # Command: skills
@@ -63,6 +74,49 @@ def build_parser() -> argparse.ArgumentParser:
     ui_parser = subparsers.add_parser("ui", help="Launch the QuetZ Engineering Control Console")
     ui_parser.add_argument("--host", default="127.0.0.1", help="Host interface to bind (default: 127.0.0.1)")
     ui_parser.add_argument("--port", type=int, default=8080, help="Port to bind (default: 8080)")
+
+    # Command: scan-security
+    sec_parser = subparsers.add_parser("scan-security", help="Run AST static application security scan (SAST)")
+    sec_parser.add_argument("paths", nargs="*", default=["."], help="Paths to files or directories to scan (default: .)")
+
+    # Command: scan-licenses
+    lic_parser = subparsers.add_parser("scan-licenses", help="Scan dependencies for copyleft/prohibited licenses")
+    lic_parser.add_argument("path", nargs="?", default=".", help="Workspace path or manifest file to scan (default: .)")
+
+    # Command: metrics
+    met_parser = subparsers.add_parser("metrics", help="Display aggregated KPI telemetry and trust metrics")
+    met_parser.add_argument("--file", default=None, help="Optional path to metrics.jsonl telemetry store")
+
+    # Command: feedback
+    fb_parser = subparsers.add_parser("feedback", help="Record human review outcome to adapt confidence weights")
+    fb_parser.add_argument("--pr-id", required=True, help="Pull Request ID or reference")
+    fb_parser.add_argument("--issue-id", required=True, help="Associated Issue ID")
+    fb_parser.add_argument(
+        "--outcome",
+        required=True,
+        choices=["MERGED_AS_IS", "MERGED_WITH_EDITS", "REJECTED_OR_ABANDONED"],
+        help="Human review outcome",
+    )
+    fb_parser.add_argument("--confidence", type=float, default=0.90, help="Original confidence score at generation")
+    fb_parser.add_argument("--files", nargs="*", default=[], help="Files touched in the PR")
+    fb_parser.add_argument("--file", default=None, help="Optional path to feedback.jsonl persistence store")
+
+    # Command: export-audit
+    audit_exp_parser = subparsers.add_parser("export-audit", help="Export comprehensive enterprise compliance and security report")
+    audit_exp_parser.add_argument("--output", "-o", default=None, help="Output file path (default: stdout, or .json/.md based on extension)")
+    audit_exp_parser.add_argument("--policy", default=None, help="Optional path to custom enterprise policy YAML/JSON file")
+    audit_exp_parser.add_argument("--path", default=".", help="Workspace path to audit (default: .)")
+
+    # Command: sign-cert
+    sign_parser = subparsers.add_parser("sign-cert", help="Sign a VerificationCertificate using cryptographic keys")
+    sign_parser.add_argument("cert_file", help="Path to VerificationCertificate JSON file")
+    sign_parser.add_argument("--output", "-o", default=None, help="Output path for signed envelope JSON")
+    sign_parser.add_argument("--key", default=None, help="Optional secret key (or env QUETZ_SIGNING_KEY)")
+
+    # Command: verify-cert
+    verify_parser = subparsers.add_parser("verify-cert", help="Verify cryptographic signature and integrity of a signed certificate envelope")
+    verify_parser.add_argument("envelope_file", help="Path to signed certificate envelope JSON file")
+    verify_parser.add_argument("--key", default=None, help="Optional secret key (or env QUETZ_SIGNING_KEY)")
 
     return parser
 
@@ -151,16 +205,37 @@ def cmd_run(args: argparse.Namespace) -> int:
     matched = PLAYBOOK_REGISTRY.match(f"{issue.title}\n{issue.body}", policy=cfg.execution_policy)
     print(f"  Matched Engineering Playbooks: {[s.name for s in matched] or 'None (General Workflow)'}")
 
-    # Initialize LLM planner if API credentials are present
+    # Initialize LLM planner if credentials or local endpoints are specified
     planner = None
+    provider = args.provider
     openrouter_key = os.environ.get("OPENROUTER_API_KEY")
-    if openrouter_key:
+    openai_key = os.environ.get("OPENAI_API_KEY")
+
+    api_base: str | None = args.api_base
+    api_key: str = ""
+    model_name: str | None = args.model
+
+    if provider == "ollama" or (api_base and "11434" in api_base):
+        api_base = api_base or "http://localhost:11434/v1"
+        model_name = model_name or "llama3.1:latest"
+        api_key = "ollama"
+        print(f"  Live LLM Provider: Local Ollama ({model_name} @ {api_base})")
+    elif provider == "openai" or (not provider and openai_key and not openrouter_key):
+        api_base = api_base or "https://api.openai.com/v1"
+        api_key = openai_key or ""
+        model_name = model_name or "gpt-4o"
+        print(f"  Live LLM Provider: OpenAI ({model_name})")
+    elif openrouter_key or provider == "openrouter":
+        api_base = api_base or "https://openrouter.ai/api/v1"
+        api_key = openrouter_key or ""
+        model_name = model_name or os.environ.get("OPENROUTER_MODEL", "nvidia/nemotron-3-super-120b-a12b:free")
+        print(f"  Live LLM Provider: OpenRouter ({model_name})")
+
+    if api_base:
         from autonomous_engineer.agents.llm_client import HttpLLMClient, LLMConfig
         from autonomous_engineer.agents.planner import LLMPlanner
-        model_name = os.environ.get("OPENROUTER_MODEL", "nvidia/nemotron-3-super-120b-a12b:free")
-        print(f"  Live LLM Provider: OpenRouter ({model_name})")
-        client = HttpLLMClient(api_base_url="https://openrouter.ai/api/v1", api_key=openrouter_key)
-        planner_cfg = LLMConfig(model=model_name, temperature=0.0)
+        client = HttpLLMClient(api_base_url=api_base, api_key=api_key)
+        planner_cfg = LLMConfig(model=model_name or "default", temperature=0.0)
         planner = LLMPlanner(llm_client=client, config=planner_cfg)
 
     pipeline = AutonomousPipeline(planner=planner)
@@ -194,7 +269,7 @@ def cmd_run(args: argparse.Namespace) -> int:
     if summary.impact_report:
         print(f"\nBlast Radius Analysis: {summary.impact_report.summary()}")
 
-    if args.open_pr and summary.final_phase == WorkflowPhase.COMPLETED:
+    if (args.open_pr or args.submit_pr) and summary.final_phase == WorkflowPhase.COMPLETED:
         bot = GitHubPRBot()
         pr_payload = bot.generate_pr_payload(issue=issue, summary=summary, policy=policy)
         print("\n" + "=" * 70)
@@ -210,6 +285,21 @@ def cmd_run(args: argparse.Namespace) -> int:
             out_path.write_text(pr_payload.model_dump_json(indent=2), encoding="utf-8")
             print(f"Saved PR payload to: {out_path}")
 
+        if args.submit_pr:
+            gh_token = os.environ.get("GITHUB_TOKEN")
+            if not gh_token:
+                print("Warning: --submit-pr specified but GITHUB_TOKEN environment variable is missing.")
+            else:
+                repo_parts = args.repo.rstrip("/").split("/")
+                if len(repo_parts) >= 2:
+                    owner, rname = repo_parts[-2], repo_parts[-1].replace(".git", "")
+                    print(f"Submitting PR to GitHub: {owner}/{rname}...")
+                    res = bot.submit_pull_request(repo_owner=owner, repo_name=rname, payload=pr_payload, github_token=gh_token)
+                    if res.get("success"):
+                        print(f"✓ Pull Request Created Successfully: {res.get('html_url')}")
+                    else:
+                        print(f"✕ Pull Request Submission Failed: {res.get('error')}")
+
     return 0 if summary.final_phase == WorkflowPhase.COMPLETED else 1
 
 
@@ -218,6 +308,282 @@ def cmd_ui(args: argparse.Namespace) -> int:
     from autonomous_engineer.web.server import run_server
     run_server(host=args.host, port=args.port)
     return 0
+
+
+def cmd_scan_security(args: argparse.Namespace) -> int:
+    """Execute static application security scan (SAST) on target files or paths."""
+    from autonomous_engineer.verification.security_scan import ASTSecurityScanner
+    print("=" * 70)
+    print("QuetZ AST Static Application Security Scanner (SAST)")
+    print("=" * 70)
+
+    scanner = ASTSecurityScanner()
+    target_paths: list[Path] = []
+    for p_str in args.paths:
+        p = Path(p_str)
+        if p.is_file() and p.suffix == ".py":
+            target_paths.append(p)
+        elif p.is_dir():
+            target_paths.extend(p.glob("**/*.py"))
+
+    # Remove duplicates and exclusions
+    cleaned_paths = sorted(
+        set(p for p in target_paths if not any(ign in str(p) for ign in (".git", ".pytest_cache", ".venv", "venv")))
+    )
+    print(f"Scanning {len(cleaned_paths)} Python module(s)...")
+
+    report = scanner.scan_files(cleaned_paths)
+    print("\n" + report.to_markdown())
+    return 0 if report.passed else 1
+
+
+def cmd_scan_licenses(args: argparse.Namespace) -> int:
+    """Execute supply-chain and copyleft license check."""
+    from autonomous_engineer.verification.license_scan import LicenseScanner
+    print("=" * 70)
+    print("QuetZ Supply-Chain & License Compliance Scanner")
+    print("=" * 70)
+
+    scanner = LicenseScanner()
+    target_path = Path(args.path)
+
+    if target_path.is_file():
+        text = target_path.read_text(encoding="utf-8")
+        if target_path.name.endswith(".toml"):
+            findings = scanner.scan_pyproject_toml(text, target_path.name)
+        else:
+            findings = scanner.scan_requirements_txt(text, target_path.name)
+        from autonomous_engineer.verification.license_scan import LicenseScanReport
+        report = LicenseScanReport(
+            packages_checked=tuple(f.package_name for f in findings),
+            findings=tuple(findings),
+            passed=not any(f.blocking for f in findings),
+        )
+    else:
+        report = scanner.scan_workspace(target_path)
+
+    print("\n" + report.to_markdown())
+    return 0 if report.passed else 1
+
+
+def cmd_metrics(args: argparse.Namespace) -> int:
+    """Display aggregated KPI telemetry summary."""
+    from autonomous_engineer.observability.metrics import MetricsCollector
+    print("=" * 70)
+    print("QuetZ Autonomous Engineering KPI & Trust Metrics Dashboard")
+    print("=" * 70)
+
+    storage = Path(args.file) if args.file else None
+    collector = MetricsCollector(storage_path=storage)
+    summary = collector.summarize()
+
+    print(f"Total Workflow Runs:        {summary.total_runs}")
+    print(f"Completed Runs (PR Opened): {summary.completed_runs}")
+    print(f"Abstained Runs:             {summary.abstained_runs}")
+    print(f"Failed Runs:                {summary.failed_runs}")
+    print(f"Resolution Rate:            {summary.resolution_rate_pct}%")
+    print(f"Epistemic Abstention Rate:  {summary.abstention_rate_pct}%")
+    print(f"Average Confidence Score:   {summary.average_confidence_score:.3f}")
+    print(f"Average Mutation Kill Rate: {summary.average_mutation_score:.3f}")
+    print(f"Average Time-to-Fix:        {summary.average_duration_seconds}s")
+    print(f"SAST Clean Pass Rate:       {summary.sast_clean_pass_rate_pct}%")
+    print(f"Anchor Tiers Used:          {summary.anchor_tier_counts}")
+    return 0
+
+
+def cmd_feedback(args: argparse.Namespace) -> int:
+    """Ingest human review feedback and display adapted confidence weights."""
+    from autonomous_engineer.observability.feedback_loop import (
+        AdaptiveConfidenceTuner,
+        PRFeedbackRecord,
+        PROutcome,
+    )
+    print("=" * 70)
+    print("QuetZ Adaptive Confidence Tuner (Feedback Ingestion)")
+    print("=" * 70)
+
+    storage = Path(args.file) if args.file else None
+    tuner = AdaptiveConfidenceTuner(persistence_file=storage)
+
+    record = PRFeedbackRecord(
+        pr_id=args.pr_id,
+        issue_id=args.issue_id,
+        outcome=PROutcome(args.outcome),
+        confidence_at_generation=args.confidence,
+        files_touched=tuple(args.files),
+    )
+    tuner.record_feedback(record)
+    new_weights = tuner.get_calibrated_weights()
+
+    print(f"Recorded Review Outcome: [{record.outcome.value}] for PR {record.pr_id}")
+    print("\nUpdated Mathematical Confidence Weights:")
+    print(f"  w_grounding:    {new_weights.w_grounding:.3f}")
+    print(f"  w_plan:         {new_weights.w_plan:.3f}")
+    print(f"  w_verification: {new_weights.w_verification:.3f}")
+    print(f"  w_authority:    {new_weights.w_authority:.3f}")
+    return 0
+
+
+def cmd_export_audit(args: argparse.Namespace) -> int:
+    """Generate comprehensive SOC2/ISO enterprise audit report for security, compliance, and metrics."""
+    import json
+    from datetime import datetime, timezone
+    from autonomous_engineer.config.policy_engine import OrgCompliancePolicy, PolicyEngine
+    from autonomous_engineer.verification.security_scan import ASTSecurityScanner
+    from autonomous_engineer.verification.license_scan import LicenseScanner
+    from autonomous_engineer.observability.metrics import MetricsCollector
+    from autonomous_engineer.observability.feedback_loop import AdaptiveConfidenceTuner
+
+    target_dir = Path(args.path)
+
+    # 1. SAST Scan (scan production code, ignoring tests and virtual environments)
+    sec_scanner = ASTSecurityScanner()
+    python_files = [
+        p for p in target_dir.glob("**/*.py")
+        if not any(ign in str(p).replace("\\", "/") for ign in (".git", ".venv", "venv", "__pycache__", "/tests/", "tests/"))
+    ]
+    sec_report = sec_scanner.scan_files(python_files)
+
+    # 2. License Scan
+    lic_scanner = LicenseScanner()
+    lic_report = lic_scanner.scan_workspace(target_dir)
+
+    # 3. Policy Engine Evaluation
+    if args.policy:
+        policy = OrgCompliancePolicy.from_file(args.policy)
+    else:
+        policy = OrgCompliancePolicy()
+    policy_engine = PolicyEngine(policy)
+    file_paths = [str(p.relative_to(target_dir)) for p in python_files[:20]]
+    policy_res = policy_engine.evaluate_patch(files_modified=file_paths)
+
+    # 4. Metrics & Bayesian Weights
+    tuner = AdaptiveConfidenceTuner()
+    weights = tuner.get_calibrated_weights()
+
+    copyleft_pkgs = [f.package_name for f in lic_report.findings if f.blocking]
+
+    report_data = {
+        "report_id": f"AUDIT-{int(time.time())}",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "workspace": str(target_dir.resolve()),
+        "security_sast": {
+            "passed": sec_report.passed,
+            "total_findings": len(sec_report.findings),
+            "critical_count": sec_report.critical_count,
+            "high_count": sec_report.high_count,
+            "files_scanned": len(sec_report.scanned_files),
+            "findings": [f.model_dump(mode="json") for f in sec_report.findings],
+        },
+        "supply_chain_licenses": {
+            "compliant": lic_report.passed,
+            "packages_audited": len(lic_report.packages_checked),
+            "copyleft_found": copyleft_pkgs,
+        },
+        "enterprise_governance": {
+            "passed": policy_res.passed,
+            "violations": [v.model_dump(mode="json") for v in policy_res.violations],
+            "banned_imports": list(policy.banned_imports),
+            "network_egress_policy": policy.network_egress_policy,
+        },
+        "bayesian_calibrated_weights": weights.model_dump(mode="json"),
+        "compliance_status": "COMPLIANT" if (sec_report.passed and lic_report.passed and policy_res.passed) else "NON_COMPLIANT",
+    }
+
+    output_content = ""
+    if args.output and args.output.endswith(".json"):
+        output_content = json.dumps(report_data, indent=2)
+    elif args.output and (args.output.endswith(".md") or args.output.endswith(".markdown")):
+        lines = [
+            f"# Enterprise Compliance & Security Audit Report ({report_data['report_id']})",
+            f"**Generated**: `{report_data['timestamp']}` | **Status**: `{report_data['compliance_status']}`\n",
+            "## 1. Static Application Security Testing (SAST)",
+            f"- Status: {'✓ PASSED' if sec_report.passed else '✕ FAILED'}",
+            f"- Files Scanned: {len(sec_report.scanned_files)}",
+            f"- Critical / High Findings: {sec_report.critical_count + sec_report.high_count}\n",
+            "## 2. Supply-Chain License Compliance",
+            f"- Status: {'✓ COMPLIANT' if lic_report.passed else '✕ NON-COMPLIANT'}",
+            f"- Prohibited/Copyleft Packages: {len(copyleft_pkgs)}\n",
+            "## 3. Organizational Governance & Safety Boundaries",
+            f"- Policy Pass: {'✓ YES' if policy_res.passed else '✕ VIOLATIONS'}",
+            f"- Network Egress Mode: `{policy.network_egress_policy}`\n",
+            "## 4. Calibrated Confidence Scoring Distribution",
+            f"- Grounding Evidence: `{weights.w_grounding:.3f}`",
+            f"- Plan Determinism: `{weights.w_plan:.3f}`",
+            f"- Multi-Test Verification: `{weights.w_verification:.3f}`",
+            f"- Reviewer Authority: `{weights.w_authority:.3f}`",
+        ]
+        output_content = "\n".join(lines)
+    else:
+        output_content = json.dumps(report_data, indent=2)
+
+    if args.output:
+        Path(args.output).write_text(output_content, encoding="utf-8")
+        print(f"Exported audit report to: {args.output}")
+    else:
+        print(output_content)
+
+    return 0 if report_data["compliance_status"] == "COMPLIANT" else 1
+
+
+def cmd_sign_cert(args: argparse.Namespace) -> int:
+    """Sign a VerificationCertificate JSON file using HMAC-SHA256."""
+    import json
+    from autonomous_engineer.verification.signing import CertificateSigner
+
+    cert_path = Path(args.cert_file)
+    if not cert_path.exists():
+        print(f"Error: Certificate file not found: {cert_path}")
+        return 1
+
+    cert_data = json.loads(cert_path.read_text(encoding="utf-8"))
+    key = args.key or os.environ.get("QUETZ_SIGNING_KEY")
+    signer = CertificateSigner(secret_key=key)
+    envelope = signer.sign_certificate(cert_data)
+
+    env_json = envelope.model_dump_json(indent=2)
+    if args.output:
+        Path(args.output).write_text(env_json, encoding="utf-8")
+        print(f"Signed certificate written to: {args.output}")
+    else:
+        print(env_json)
+    return 0
+
+
+def cmd_verify_cert(args: argparse.Namespace) -> int:
+    """Verify cryptographic signature and integrity of a signed certificate envelope."""
+    import json
+    from autonomous_engineer.verification.signing import CertificateSigner, SignedCertificateEnvelope
+
+    env_path = Path(args.envelope_file)
+    if not env_path.exists():
+        print(f"Error: Envelope file not found: {env_path}")
+        return 1
+
+    env_data = json.loads(env_path.read_text(encoding="utf-8"))
+    envelope = SignedCertificateEnvelope(**env_data)
+
+    key = args.key or os.environ.get("QUETZ_SIGNING_KEY")
+    signer = CertificateSigner(secret_key=key)
+    is_valid = signer.verify_envelope(envelope)
+
+    if is_valid:
+        cert = envelope.certificate_payload
+        print("=" * 70)
+        print("✓ CRYPTOGRAPHIC VERIFICATION SUCCESSFUL")
+        print("=" * 70)
+        print(f"Certificate ID: {cert.get('certificate_id')}")
+        print(f"Algorithm:      {envelope.signature_algorithm}")
+        print(f"Evidence Hash:  {envelope.evidence_hash}")
+        print(f"Status:         {cert.get('status')}")
+        print(f"Confidence:     {cert.get('confidence_score')}")
+        print("Signature:      VALID (Unmodified Artifact)")
+        return 0
+    else:
+        print("=" * 70)
+        print("✕ CRYPTOGRAPHIC VERIFICATION FAILED (TAMPER DETECTED / KEY MISMATCH)")
+        print("=" * 70)
+        return 1
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -233,6 +599,20 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_run(args)
     elif args.command == "ui":
         return cmd_ui(args)
+    elif args.command == "scan-security":
+        return cmd_scan_security(args)
+    elif args.command == "scan-licenses":
+        return cmd_scan_licenses(args)
+    elif args.command == "metrics":
+        return cmd_metrics(args)
+    elif args.command == "feedback":
+        return cmd_feedback(args)
+    elif args.command == "export-audit":
+        return cmd_export_audit(args)
+    elif args.command == "sign-cert":
+        return cmd_sign_cert(args)
+    elif args.command == "verify-cert":
+        return cmd_verify_cert(args)
     else:
         parser.print_help()
         return 0

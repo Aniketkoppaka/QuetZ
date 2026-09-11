@@ -1,9 +1,16 @@
-"""
-Structured logging, tracing, and execution flight recorder.
+﻿"""
+Structured logging, tracing, execution flight recorder, KPI metrics, and adaptive feedback tuning.
 
 Public API:
   - FlightEvent: Immutable event record in an agent's flight trajectory.
   - FlightRecorder: In-memory and file-backed trajectory flight recorder.
+  - RunMetricRecord: Telemetry record for a workflow run.
+  - MetricsSummary: Aggregated KPI summary (resolution rate, mutation score, etc.).
+  - MetricsCollector: Metrics aggregator and JSONL persistence engine.
+  - AdaptiveConfidenceTuner: Self-calibrating confidence tuning engine.
+  - ConfidenceWeights: Mathematical weights for confidence calculation.
+  - PRFeedbackRecord: Human review feedback record.
+  - PROutcome: Enum of PR review dispositions.
 """
 from __future__ import annotations
 
@@ -13,6 +20,18 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
+
+from autonomous_engineer.observability.feedback_loop import (
+    AdaptiveConfidenceTuner,
+    ConfidenceWeights,
+    PRFeedbackRecord,
+    PROutcome,
+)
+from autonomous_engineer.observability.metrics import (
+    MetricsCollector,
+    MetricsSummary,
+    RunMetricRecord,
+)
 
 
 def _utcnow() -> datetime:
@@ -65,7 +84,7 @@ class FlightRecorder:
     def events(self) -> tuple[FlightEvent, ...]:
         return tuple(self._events)
 
-    def record(self, event_type: str, component: str, payload: dict[str, Any]) -> FlightEvent:
+    def record(self, event_type: str, component: str, payload: dict[str, Any] | None = None) -> FlightEvent:
         """
         Record a new flight event synchronously and append to log file if configured.
         """
@@ -73,7 +92,7 @@ class FlightRecorder:
             run_id=self._run_id,
             event_type=event_type,
             component=component,
-            payload=payload,
+            payload=payload or {},
         )
         self._events.append(event)
         if self._log_file is not None:
@@ -92,4 +111,14 @@ class FlightRecorder:
         return res
 
 
-__all__ = ["FlightEvent", "FlightRecorder"]
+__all__ = [
+    "AdaptiveConfidenceTuner",
+    "ConfidenceWeights",
+    "FlightEvent",
+    "FlightRecorder",
+    "MetricsCollector",
+    "MetricsSummary",
+    "PRFeedbackRecord",
+    "PROutcome",
+    "RunMetricRecord",
+]

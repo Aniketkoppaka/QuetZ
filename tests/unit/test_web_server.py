@@ -186,3 +186,46 @@ class TestWebServerHttpEndpoints:
         assert req.status == 200
         runs = json.loads(req.read().decode("utf-8"))
         assert len(runs) >= 3
+
+    def test_api_metrics(self, test_server: str) -> None:
+        req = urllib.request.urlopen(f"{test_server}/api/metrics")
+        assert req.status == 200
+        data = json.loads(req.read().decode("utf-8"))
+        assert data["total_runs"] == 2
+        assert data["completed_runs"] == 2
+        assert data["resolution_rate_pct"] == 100.0
+        assert data["sast_clean_pass_rate_pct"] == 100.0
+        assert "tier_1" in data["anchor_tier_counts"]
+
+    def test_api_feedback_get(self, test_server: str) -> None:
+        req = urllib.request.urlopen(f"{test_server}/api/feedback")
+        assert req.status == 200
+        data = json.loads(req.read().decode("utf-8"))
+        assert "calibrated_weights" in data
+        assert "w_verification" in data["calibrated_weights"]
+        assert "w_grounding" in data["calibrated_weights"]
+        assert "total_feedback_count" in data
+
+    def test_api_feedback_post_and_calibrate(self, test_server: str) -> None:
+        payload = json.dumps({
+            "pr_id": "PR-TEST-101",
+            "issue_id": "ISSUE-101",
+            "outcome": "MERGED_AS_IS",
+            "confidence": 0.95,
+            "comments": "Great clean verified patch"
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            f"{test_server}/api/feedback",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req) as resp:
+            assert resp.status == 201
+            res = json.loads(resp.read().decode("utf-8"))
+            assert res["status"] == "RECORDED"
+            assert res["outcome"] == "MERGED_AS_IS"
+            assert "updated_weights" in res
+            assert res["updated_weights"]["w_verification"] > 0
+
+

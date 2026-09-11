@@ -21,6 +21,13 @@ from urllib.parse import parse_qs, urlparse
 # Base path for static frontend assets
 STATIC_DIR = Path(__file__).parent / "static"
 
+from autonomous_engineer.observability.feedback_loop import (
+    AdaptiveConfidenceTuner,
+    PRFeedbackRecord,
+    PROutcome,
+)
+_GLOBAL_TUNER = AdaptiveConfidenceTuner()
+
 
 def get_mock_runs() -> list[dict[str, Any]]:
     """Return realistic, rich ASE runs displaying core architectural differentiators."""
@@ -645,6 +652,48 @@ class ASEConsoleHandler(SimpleHTTPRequestHandler):
         if path == "/api/system":
             self._send_json(get_system_summary())
             return
+        elif path == "/api/metrics":
+            from autonomous_engineer.observability import MetricsCollector, RunMetricRecord
+            collector = MetricsCollector()
+            # Seed with recorded mock run metrics
+            collector.record(
+                RunMetricRecord(
+                    run_id="run-ase-8921",
+                    issue_id="GH-2419",
+                    status="COMPLETED",
+                    duration_seconds=38.4,
+                    confidence_score=0.98,
+                    mutation_score=0.875,
+                    blast_radius_score=0.12,
+                    sast_passed=True,
+                    policy_passed=True,
+                    anchor_tiers_used=(1, 2),
+                )
+            )
+            collector.record(
+                RunMetricRecord(
+                    run_id="run-ase-8922",
+                    issue_id="GH-2420",
+                    status="COMPLETED",
+                    duration_seconds=29.1,
+                    confidence_score=0.94,
+                    mutation_score=0.92,
+                    blast_radius_score=0.08,
+                    sast_passed=True,
+                    policy_passed=True,
+                    anchor_tiers_used=(1,),
+                )
+            )
+            self._send_json(collector.summarize().model_dump(mode="json"))
+            return
+        elif path == "/api/feedback":
+            weights = _GLOBAL_TUNER.get_calibrated_weights()
+            self._send_json({
+                "calibrated_weights": weights.model_dump(mode="json"),
+                "total_feedback_count": len(_GLOBAL_TUNER.feedback_records),
+                "records": [r.model_dump(mode="json") for r in _GLOBAL_TUNER.feedback_records],
+            })
+            return
         elif path == "/api/runs":
             runs = get_mock_runs()
             summary = [
@@ -860,6 +909,40 @@ class ASEConsoleHandler(SimpleHTTPRequestHandler):
             sess["messages"].append(agent_response)
 
             self._send_json(agent_response, status=HTTPStatus.CREATED)
+            return
+
+        # Route: Submit human PR review feedback
+        if path == "/api/feedback":
+            pr_id = payload.get("pr_id", "PR-USER-SUBMITTED")
+            issue_id = payload.get("issue_id", "ISSUE-LOCAL")
+            raw_outcome = payload.get("outcome", "MERGED_AS_IS")
+            try:
+                outcome = PROutcome(raw_outcome)
+            except ValueError:
+                self._send_error(HTTPStatus.BAD_REQUEST, f"Invalid outcome: {raw_outcome}")
+                return
+
+            confidence = float(payload.get("confidence", 0.90))
+            files = payload.get("files", [])
+            comments = payload.get("comments", "")
+
+            rec = PRFeedbackRecord(
+                pr_id=pr_id,
+                issue_id=issue_id,
+                outcome=outcome,
+                confidence_at_generation=confidence,
+                files_touched=tuple(files),
+                human_comments=comments,
+            )
+            _GLOBAL_TUNER.record_feedback(rec)
+            new_weights = _GLOBAL_TUNER.get_calibrated_weights()
+
+            self._send_json({
+                "status": "RECORDED",
+                "pr_id": pr_id,
+                "outcome": outcome.value,
+                "updated_weights": new_weights.model_dump(mode="json"),
+            }, status=HTTPStatus.CREATED)
             return
 
         self._send_error(HTTPStatus.NOT_FOUND, "Endpoint not found")

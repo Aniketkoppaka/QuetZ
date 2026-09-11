@@ -116,6 +116,17 @@
           <span class="nav-title">ARTIFACTS</span>
           <span class="nav-count">3</span>
         </li>
+        <li class="nav-item" data-action="show-metrics">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </span>
+          <span class="nav-title">KPI METRICS</span>
+          <span class="nav-count text-green">LIVE</span>
+        </li>
       </ul>
 
       <!-- Policy Boundary Footer -->
@@ -221,6 +232,25 @@
           </button>
         </div>
         <div class="grid-cards" id="artifacts-container"></div>
+      </section>
+
+      <!-- Overlay View: KPI Metrics & Telemetry Dashboard -->
+      <section class="context-panel hidden" id="panel-metrics">
+        <div class="view-header">
+          <div class="title-cluster">
+            <h2>AUTONOMOUS ENGINEERING KPI & TRUST DASHBOARD</h2>
+            <span class="subtitle">Resolution Fidelity, Epistemic Abstention, Mutation Scores & Calibrated Formula Weights</span>
+          </div>
+          <button class="btn btn-outline close-context-btn">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            BACK TO CHAT
+          </button>
+        </div>
+        <div class="metrics-dashboard-content" id="metrics-container">
+          <!-- Dynamically populated KPI cards -->
+        </div>
       </section>
     </main>
   </div>

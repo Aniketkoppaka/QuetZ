@@ -130,6 +130,96 @@ class ExecutionVerifier:
                         )
                     )
 
+            # JavaScript & TypeScript AST structural check
+            elif change.file_path.endswith((".js", ".jsx", ".ts", ".tsx")):
+                start_t = time.perf_counter()
+                try:
+                    from autonomous_engineer.repository.js_ts_analyzer import JsTsAnalyzer
+                    js_analyzer = JsTsAnalyzer()
+                    content = target_path.read_text(encoding="utf-8", errors="replace")
+                    mod_map = js_analyzer.analyze_source(content, change.file_path)
+                    latency = round((time.perf_counter() - start_t) * 1000, 2)
+
+                    results.append(
+                        VerificationResult(
+                            verification_type=VerificationType.SYNTAX_AST,
+                            target=change.file_path,
+                            passed=True,
+                            duration_ms=latency,
+                        )
+                    )
+
+                    # Symbol presence check if step specifies target_symbol
+                    if step and step.target_symbol:
+                        sym_found = js_analyzer.check_symbol_present(mod_map, step.target_symbol)
+                        if step.operation in (StepOperation.MODIFY_SYMBOL, StepOperation.ADD_SYMBOL):
+                            results.append(
+                                VerificationResult(
+                                    verification_type=VerificationType.SYMBOL_EXISTENCE,
+                                    target=f"{change.file_path}::{step.target_symbol}",
+                                    passed=sym_found,
+                                    error_message=None
+                                    if sym_found
+                                    else f"Symbol {step.target_symbol!r} not found in {change.file_path!r} after edits.",
+                                )
+                            )
+                except Exception as e:
+                    latency = round((time.perf_counter() - start_t) * 1000, 2)
+                    results.append(
+                        VerificationResult(
+                            verification_type=VerificationType.SYNTAX_AST,
+                            target=change.file_path,
+                            passed=False,
+                            duration_ms=latency,
+                            error_message=f"JsTsAnalysisError in {change.file_path}: {e}",
+                        )
+                    )
+
+            # Go (.go) and Rust (.rs) structural check
+            elif change.file_path.endswith((".go", ".rs")):
+                start_t = time.perf_counter()
+                try:
+                    from autonomous_engineer.repository.go_rust_analyzer import PolyglotCodeAnalyzer
+                    poly_analyzer = PolyglotCodeAnalyzer()
+                    content = target_path.read_text(encoding="utf-8", errors="replace")
+                    mod_map = poly_analyzer.analyze_source(content, change.file_path)
+                    latency = round((time.perf_counter() - start_t) * 1000, 2)
+
+                    results.append(
+                        VerificationResult(
+                            verification_type=VerificationType.SYNTAX_AST,
+                            target=change.file_path,
+                            passed=True,
+                            duration_ms=latency,
+                        )
+                    )
+
+                    # Symbol presence check
+                    if step and step.target_symbol:
+                        sym_found = poly_analyzer.check_symbol_present(mod_map, step.target_symbol)
+                        if step.operation in (StepOperation.MODIFY_SYMBOL, StepOperation.ADD_SYMBOL):
+                            results.append(
+                                VerificationResult(
+                                    verification_type=VerificationType.SYMBOL_EXISTENCE,
+                                    target=f"{change.file_path}::{step.target_symbol}",
+                                    passed=sym_found,
+                                    error_message=None
+                                    if sym_found
+                                    else f"Symbol {step.target_symbol!r} not found in {change.file_path!r} after edits.",
+                                )
+                            )
+                except Exception as e:
+                    latency = round((time.perf_counter() - start_t) * 1000, 2)
+                    results.append(
+                        VerificationResult(
+                            verification_type=VerificationType.SYNTAX_AST,
+                            target=change.file_path,
+                            passed=False,
+                            duration_ms=latency,
+                            error_message=f"PolyglotAnalysisError in {change.file_path}: {e}",
+                        )
+                    )
+
         return results
 
     def verify_tests(
@@ -176,6 +266,26 @@ class ExecutionVerifier:
                 passed=False,
                 exit_code=-1,
                 error_message=f"Failed to parse test command: {e}",
+            )
+
+        # If Docker sandbox is requested, delegate to DockerRunner
+        if getattr(policy, "use_docker_sandbox", False):
+            from autonomous_engineer.execution.docker_runner import DockerExecutionConfig, DockerRunner
+            docker_cfg = DockerExecutionConfig(
+                image_name=getattr(policy, "docker_image", "quetz-sandbox:latest"),
+                timeout_seconds=int(policy.max_execution_time_seconds),
+            )
+            runner = DockerRunner(config=docker_cfg)
+            res = runner.run_command(clean_cmd, workspace=workspace, allow_fallback=True)
+            return VerificationResult(
+                verification_type=VerificationType.SUBPROCESS_TEST,
+                target=clean_cmd,
+                passed=res.passed,
+                exit_code=res.exit_code,
+                stdout=res.stdout,
+                stderr=res.stderr,
+                duration_ms=res.duration_ms,
+                error_message=res.error_message if not res.passed else None,
             )
 
         start_t = time.perf_counter()

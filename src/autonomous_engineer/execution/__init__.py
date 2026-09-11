@@ -21,6 +21,11 @@ from autonomous_engineer.execution.benchmark import (
     ExecutionBenchmarkReport,
     ExecutionBenchmarkScenario,
 )
+from autonomous_engineer.execution.docker_runner import (
+    DockerExecutionConfig,
+    DockerExecutionResult,
+    DockerRunner,
+)
 from autonomous_engineer.execution.engine import ExecutionEngine
 from autonomous_engineer.execution.file_editor import SafeFileEditor
 from autonomous_engineer.execution.models import (
@@ -43,6 +48,9 @@ from autonomous_engineer.execution.verifier import ExecutionVerifier
 
 __all__ = [
     "Capability",
+    "DockerExecutionConfig",
+    "DockerExecutionResult",
+    "DockerRunner",
     "ExecutionBenchmarkHarness",
     "ExecutionBenchmarkReport",
     "ExecutionBenchmarkScenario",

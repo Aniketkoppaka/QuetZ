@@ -1,0 +1,22 @@
+- id: quetz-sast
+  name: QuetZ SAST Security Scanner
+  description: Scan Python and JavaScript/TypeScript code for critical AST security vulnerabilities
+  entry: python -m autonomous_engineer scan-security
+  language: python
+  types_or: [python, javascript, ts]
+  pass_filenames: true
+
+- id: quetz-license-audit
+  name: QuetZ Supply-Chain License Scanner
+  description: Scan project dependencies for copyleft (GPL/AGPL/SSPL) contamination
+  entry: python -m autonomous_engineer scan-licenses
+  language: python
+  files: ^(requirements.*\.txt|pyproject\.toml|package\.json)$
+  pass_filenames: true
+
+- id: quetz-compliance-audit
+  name: QuetZ Enterprise Compliance Exporter
+  description: Generate automated SOC2/ISO compliance and security audit report
+  entry: python -m autonomous_engineer export-audit
+  language: python
+  pass_filenames: false

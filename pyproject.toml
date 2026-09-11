@@ -14,6 +14,10 @@ dependencies = [
     "pydantic>=2.0",
 ]
 
+[project.scripts]
+autonomous-engineer = "autonomous_engineer.cli:main"
+quetz = "autonomous_engineer.cli:main"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=8.3",
@@ -21,6 +25,9 @@ dev = [
     "mypy>=1.11",
     "ruff>=0.6",
 ]
+
+[tool.setuptools.package-data]
+autonomous_engineer = ["web/static/*"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

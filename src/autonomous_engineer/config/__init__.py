@@ -1,8 +1,24 @@
 """
-Configuration loading and validation.
-
-Responsible for reading environment variables, validating required fields,
-and exposing a typed configuration object to the rest of the system.
-
-Status: Milestone 0 — structural placeholder only.
+Configuration loading, validation, and enterprise policy engine.
 """
+from __future__ import annotations
+
+from autonomous_engineer.config.policy_engine import (
+    OrgCompliancePolicy,
+    PolicyCheckResult,
+    PolicyEngine,
+    PolicyViolation,
+)
+from autonomous_engineer.config.project_config import (
+    ProjectExecutionConfig,
+    QuetzProjectConfig,
+)
+
+__all__ = [
+    "OrgCompliancePolicy",
+    "PolicyCheckResult",
+    "PolicyEngine",
+    "PolicyViolation",
+    "ProjectExecutionConfig",
+    "QuetzProjectConfig",
+]

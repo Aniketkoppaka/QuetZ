@@ -1,0 +1,143 @@
+﻿name: QuetZ Autonomous Resolution Pipeline
+
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue_id:
+        description: "Issue ID or reference (e.g. owner/repo#42)"
+        required: true
+      title:
+        description: "Issue title"
+        required: true
+      body:
+        description: "Problem description or traceback"
+        required: true
+      reproduce_cmd:
+        description: "Reproduction test command (e.g. pytest -k test_bug)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  autonomous-engineer:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issues' && (github.event.label.name == 'quetz-fix' || github.event.label.name == 'autonomous-fix')) ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/quetz fix'))
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Target Codebase
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Toolchain & Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[test]
+
+      - name: Parse Trigger & Issue Context
+        id: context
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "issue_id=${{ github.event.inputs.issue_id }}" >> $GITHUB_OUTPUT
+            echo "title=${{ github.event.inputs.title }}" >> $GITHUB_OUTPUT
+            echo "body=${{ github.event.inputs.body }}" >> $GITHUB_OUTPUT
+            echo "reproduce_cmd=${{ github.event.inputs.reproduce_cmd }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "issue_comment" ]; then
+            echo "issue_id=${{ github.repository }}#${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+            echo "title=${{ github.event.issue.title }}" >> $GITHUB_OUTPUT
+            echo "body=${{ github.event.issue.body }}" >> $GITHUB_OUTPUT
+            echo "reproduce_cmd=" >> $GITHUB_OUTPUT
+          else
+            echo "issue_id=${{ github.repository }}#${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+            echo "title=${{ github.event.issue.title }}" >> $GITHUB_OUTPUT
+            echo "body=${{ github.event.issue.body }}" >> $GITHUB_OUTPUT
+            echo "reproduce_cmd=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Execute QuetZ Autonomous Resolution Loop
+        id: quetz_run
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL || 'nvidia/nemotron-3-super-120b-a12b:free' }}
+        run: |
+          mkdir -p artifacts
+          REPRO_ARG=""
+          if [ -n "${{ steps.context.outputs.reproduce_cmd }}" ]; then
+            REPRO_ARG="--reproduce-cmd \"${{ steps.context.outputs.reproduce_cmd }}\" --require-reproduction"
+          fi
+
+          python -m autonomous_engineer run \
+            --repo . \
+            --issue-id "${{ steps.context.outputs.issue_id }}" \
+            --title "${{ steps.context.outputs.title }}" \
+            --body "${{ steps.context.outputs.body }}" \
+            --mutation-testing \
+            --open-pr \
+            --out-dir artifacts \
+            $REPRO_ARG || true
+
+      - name: Dispatch PR if Verified Success
+        if: hashFiles('artifacts/pr_payload.json') != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python - << 'EOF'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          payload_path = Path("artifacts/pr_payload.json")
+          payload = json.loads(payload_path.read_text(encoding="utf-8"))
+          branch = payload["branch_name"]
+          base = payload["base_branch"]
+          title = payload["title"]
+          body = payload["body"]
+          commit_msg = payload["commit_message"]
+
+          subprocess.run(["git", "config", "user.name", "quetz-bot[bot]"], check=True)
+          subprocess.run(["git", "config", "user.email", "quetz-bot[bot]@users.noreply.github.com"], check=True)
+          subprocess.run(["git", "checkout", "-b", branch], check=True)
+          subprocess.run(["git", "add", "-A"], check=True)
+          subprocess.run(["git", "commit", "-m", commit_msg], check=True)
+          subprocess.run(["git", "push", "origin", branch, "--force"], check=True)
+
+          subprocess.run([
+              "gh", "pr", "create",
+              "--title", title,
+              "--body", body,
+              "--head", branch,
+              "--base", base
+          ], check=True)
+          EOF
+
+      - name: Post Formal Abstention Feedback If Not Resolved
+        if: hashFiles('artifacts/pr_payload.json') == '' && github.event_name != 'workflow_dispatch'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment "${{ steps.context.outputs.issue_id }}" \
+            --body "🤖 **QuetZ Autonomous Engineer Notice**: QuetZ formally **abstained** from proposing a pull request for this issue. Under our fail-closed safety policy, fixes are only opened when pre-patch reproduction fails, post-patch tests pass, SAST checks succeed, and verification confidence exceeds minimum thresholds."
+
+      - name: Upload Verification & Audit Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quetz-verification-artifacts
+          path: artifacts/

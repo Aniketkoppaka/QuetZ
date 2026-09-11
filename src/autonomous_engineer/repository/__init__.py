@@ -43,6 +43,17 @@ from autonomous_engineer.repository.impact_analyzer import (
     ChangedSymbol,
     ImpactReport,
 )
+from autonomous_engineer.repository.js_ts_analyzer import (
+    JsTsAnalyzer,
+    JsTsClassSymbol,
+    JsTsFunctionSymbol,
+    JsTsModuleMap,
+)
+from autonomous_engineer.repository.go_rust_analyzer import (
+    PolyglotCodeAnalyzer,
+    PolyglotModuleMap,
+    PolyglotSymbol,
+)
 
 __all__ = [
     "AcquisitionOptions",
@@ -61,6 +72,10 @@ __all__ = [
     "GitUnavailableError",
     "ImpactReport",
     "InvalidRepositoryReferenceError",
+    "JsTsAnalyzer",
+    "JsTsClassSymbol",
+    "JsTsFunctionSymbol",
+    "JsTsModuleMap",
     "NetworkFailedError",
     "PythonAstAnalyzer",
     "RepositoryAnalyzer",

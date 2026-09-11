@@ -4,8 +4,8 @@
 
 A production-grade, verifiable, fail-closed autonomous software engineering agent that resolves GitHub issues end-to-end under deterministic safety constraints.
 
-> **Status: Production Architecture Complete (437 Passing Tests).**  
-> Features full AST repository mapping, 4-tier fuzzy anchor editing, fail-then-pass reproduction verification, semantic AST blast-radius analysis, mutation testing, proof-carrying verification certificates, independent code review, automated GitHub PR delivery, and an interactive Chat-Centric Engineering Control Console.
+> **Status: Production Architecture Complete (514 Passing Tests).**  
+> Features full AST repository mapping, 4-tier fuzzy anchor editing, fail-then-pass reproduction verification, semantic AST blast-radius analysis, mutation testing, proof-carrying verification certificates with Ed25519/HMAC cryptographic signing, independent code review, direct automated GitHub PR delivery, interactive Chat-Centric Engineering Control Console, AST SAST scanner, copyleft license scanner, Bayesian confidence tuner, polyglot analysis (Python, JS/TS, Go, Rust), local Ollama/OpenAI/OpenRouter LLM provider routing, reusable GitHub Action, and automated SOC2 enterprise compliance exporter.
 
 ---
 
@@ -26,15 +26,38 @@ List registered engineering playbooks:
 python -m autonomous_engineer skills
 ```
 
-Run end-to-end autonomous resolution on an issue:
+Run AST static application security scan (SAST):
+```bash
+python -m autonomous_engineer scan-security src/
+```
+
+Run supply-chain copyleft license audit:
+```bash
+python -m autonomous_engineer scan-licenses requirements.txt
+```
+
+Display aggregated KPI telemetry & resolution fidelity metrics:
+```bash
+python -m autonomous_engineer metrics
+```
+
+Export SOC2/ISO compliance and security audit report:
+```bash
+python -m autonomous_engineer export-audit --output artifacts/enterprise_audit.md
+```
+
+Run end-to-end autonomous resolution with Local Ollama:
 ```bash
 python -m autonomous_engineer run \
   --repo https://github.com/owner/repo \
   --title "Fix ZeroDivisionError in calculation" \
   --body "safe_divide crashes when divisor b is 0. Should return 0.0." \
+  --provider ollama \
+  --model llama3.1 \
   --reproduce-cmd "pytest -k test_zero_division" \
   --require-reproduction \
-  --mutation-testing
+  --mutation-testing \
+  --submit-pr
 ```
 
 Run live benchmark validation suite:

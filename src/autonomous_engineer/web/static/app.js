@@ -108,11 +108,13 @@ function handleNavAction(action) {
   const panelRepos = $('#panel-repos');
   const panelAgents = $('#panel-agents');
   const panelArtifacts = $('#panel-artifacts');
+  const panelMetrics = $('#panel-metrics');
 
   // Hide all context panels
   panelRepos.classList.add('hidden');
   panelAgents.classList.add('hidden');
   panelArtifacts.classList.add('hidden');
+  if (panelMetrics) panelMetrics.classList.add('hidden');
   chatFeed.classList.add('hidden');
 
   $$('.nav-item').forEach(i => i.classList.remove('active'));
@@ -132,6 +134,11 @@ function handleNavAction(action) {
     panelArtifacts.classList.remove('hidden');
     $(`.nav-item[data-action="show-artifacts"]`).classList.add('active');
     loadArtifacts();
+  } else if (action === 'show-metrics') {
+    if (panelMetrics) panelMetrics.classList.remove('hidden');
+    const navItem = $(`.nav-item[data-action="show-metrics"]`);
+    if (navItem) navItem.classList.add('active');
+    loadMetrics();
   }
 }
 
@@ -344,6 +351,7 @@ function renderCardHtml(card) {
     `;
   } else if (card.type === 'verification_certificate') {
     const c = card.data;
+    const issueId = (state.activeSessionData && state.activeSessionData.issue_id) || 'GH-2419';
     return `
       <div class="eng-card">
         <div class="card-top" onclick="this.parentElement.classList.toggle('collapsed')">
@@ -366,6 +374,56 @@ function renderCardHtml(card) {
             <span class="text-muted" style="font-size: 10px;">SHA-256 Digest:</span>
             <div class="cert-hash">${c.evidence_hash}</div>
           </div>
+          <div class="cert-review-actions" style="margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <span class="text-muted" style="font-size: 10px; font-weight: 700;">HUMAN PR REVIEW FEEDBACK:</span>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn-card-action btn-merge" style="color: var(--accent-green); border-color: rgba(57, 255, 136, 0.4);" onclick="event.stopPropagation(); submitPRFeedback('${c.certificate_id}', '${issueId}', 'MERGED_AS_IS', ${c.confidence_score || 0.95});">✓ MERGE AS-IS</button>
+              <button class="btn-card-action btn-reject" style="color: var(--accent-red); border-color: rgba(255, 92, 92, 0.4);" onclick="event.stopPropagation(); submitPRFeedback('${c.certificate_id}', '${issueId}', 'REJECTED_OR_ABANDONED', ${c.confidence_score || 0.95});">✕ REJECT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (card.type === 'security_audit') {
+    const s = card.data;
+    const isClean = s.passed && (s.total_findings === 0 || s.critical_count === 0);
+    return `
+      <div class="eng-card">
+        <div class="card-top" onclick="this.parentElement.classList.toggle('collapsed')">
+          <div class="card-header-left">
+            <span class="card-collapse-icon">▼</span>
+            <span class="${isClean ? 'text-green' : 'text-red'}">AST SAST SECURITY AUDIT</span>
+          </div>
+          <div class="card-header-right">
+            <span class="badge ${isClean ? 'badge-success' : 'badge-failed'}">${isClean ? 'CLEAN' : 'VULNERABILITIES DETECTED'}</span>
+          </div>
+        </div>
+        <div class="card-body-content cert-card-body">
+          <div class="cert-row"><span>Files Scanned:</span> <strong>${s.files_scanned || 1}</strong></div>
+          <div class="cert-row"><span>Total Findings:</span> <strong class="${s.total_findings > 0 ? 'text-red' : 'text-green'}">${s.total_findings || 0}</strong></div>
+          <div class="cert-row"><span>Critical / High:</span> <strong>${(s.critical_count || 0) + (s.high_count || 0)}</strong></div>
+          <div class="cert-row"><span>CWE / OWASP Rules:</span> <span class="text-cyan">eval/exec, shell=True, pickle, hardcoded keys</span></div>
+        </div>
+      </div>
+    `;
+  } else if (card.type === 'license_audit') {
+    const l = card.data;
+    const isClean = l.compliant !== false && (!l.copyleft_found || l.copyleft_found.length === 0);
+    return `
+      <div class="eng-card">
+        <div class="card-top" onclick="this.parentElement.classList.toggle('collapsed')">
+          <div class="card-header-left">
+            <span class="card-collapse-icon">▼</span>
+            <span class="${isClean ? 'text-green' : 'text-red'}">SUPPLY-CHAIN LICENSE COMPLIANCE</span>
+          </div>
+          <div class="card-header-right">
+            <span class="badge ${isClean ? 'badge-success' : 'badge-failed'}">${isClean ? 'COMPLIANT' : 'VIRAL COPYLEFT DETECTED'}</span>
+          </div>
+        </div>
+        <div class="card-body-content cert-card-body">
+          <div class="cert-row"><span>Policy Level:</span> <strong>${l.policy || 'Permissive-Only (MIT/Apache/BSD)'}</strong></div>
+          <div class="cert-row"><span>Dependencies Inspected:</span> <strong>${l.total_inspected || 0}</strong></div>
+          <div class="cert-row"><span>Copyleft / Banned:</span> <strong class="${isClean ? 'text-green' : 'text-red'}">${isClean ? '0 (Clean)' : (l.copyleft_found || []).join(', ')}</strong></div>
         </div>
       </div>
     `;
@@ -558,6 +616,153 @@ async function loadArtifacts() {
     container.appendChild(card);
   });
 }
+
+// KPI Metrics & Telemetry Dashboard Loader
+async function loadMetrics() {
+  const container = $('#metrics-container');
+  if (!container) return;
+  container.innerHTML = '<div class="text-muted" style="padding: 20px;">Loading engineering telemetry & metrics...</div>';
+
+  const [metrics, feedback] = await Promise.all([
+    fetchJson('/api/metrics'),
+    fetchJson('/api/feedback')
+  ]);
+
+  if (!metrics) {
+    container.innerHTML = '<div class="text-red" style="padding: 20px;">Failed to load metrics.</div>';
+    return;
+  }
+
+  const weights = (feedback && feedback.calibrated_weights) || {
+    w_grounding: 0.30,
+    w_plan: 0.25,
+    w_verification: 0.35,
+    w_authority: 0.10
+  };
+
+  const totalFeedback = (feedback && feedback.total_feedback_count) || 0;
+
+  container.innerHTML = `
+    <!-- Top Summary Stat Cards -->
+    <div class="metrics-grid">
+      <div class="metric-stat-card">
+        <div class="metric-stat-label">TOTAL SESSIONS / RUNS</div>
+        <div class="metric-stat-value text-cyan">${metrics.total_runs || 0}</div>
+        <div class="metric-stat-sub">Completed: ${metrics.completed_runs || 0} | Failed/Abstained: ${metrics.failed_runs || 0}</div>
+      </div>
+
+      <div class="metric-stat-card">
+        <div class="metric-stat-label">RESOLUTION FIDELITY</div>
+        <div class="metric-stat-value text-green">${(metrics.resolution_rate_pct || 0).toFixed(1)}%</div>
+        <div class="metric-meter">
+          <div class="metric-meter-fill bg-green" style="width: ${Math.min(100, metrics.resolution_rate_pct || 0)}%;"></div>
+        </div>
+      </div>
+
+      <div class="metric-stat-card">
+        <div class="metric-stat-label">EPISTEMIC ABSTENTION</div>
+        <div class="metric-stat-value ${metrics.abstention_rate_pct > 0 ? 'text-cyan' : 'text-muted'}">${(metrics.abstention_rate_pct || 0).toFixed(1)}%</div>
+        <div class="metric-stat-sub">Fail-Closed Safety Triggered</div>
+      </div>
+
+      <div class="metric-stat-card">
+        <div class="metric-stat-label">AVG MUTATION KILL SCORE</div>
+        <div class="metric-stat-value text-green">${((metrics.avg_mutation_score || 0) * 100).toFixed(1)}%</div>
+        <div class="metric-meter">
+          <div class="metric-meter-fill bg-green" style="width: ${Math.min(100, (metrics.avg_mutation_score || 0) * 100)}%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Detail Cards: SAST, Anchors, and Calibrated Weights -->
+    <div class="metrics-grid" style="margin-top: 14px;">
+      <div class="metric-detail-card">
+        <div class="metric-card-header text-green">SECURITY & ANCHOR STABILITY</div>
+        <div class="metric-table-wrap">
+          <div class="metric-row">
+            <span>AST SAST Clean Pass Rate</span>
+            <strong class="text-green">${(metrics.sast_clean_pass_rate_pct || 0).toFixed(1)}%</strong>
+          </div>
+          <div class="metric-row">
+            <span>Average Execution Duration</span>
+            <strong>${(metrics.avg_duration_seconds || 0).toFixed(1)}s</strong>
+          </div>
+          <div class="metric-row">
+            <span>Tier 1 (Exact Anchor) Applied</span>
+            <strong class="text-cyan">${(metrics.anchor_tier_counts && metrics.anchor_tier_counts.tier_1) || 0}</strong>
+          </div>
+          <div class="metric-row">
+            <span>Tier 2 (Structural AST) Applied</span>
+            <strong>${(metrics.anchor_tier_counts && metrics.anchor_tier_counts.tier_2) || 0}</strong>
+          </div>
+          <div class="metric-row">
+            <span>Zero-Egress Sandboxing</span>
+            <strong class="text-green">ENFORCED (100%)</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-detail-card">
+        <div class="metric-card-header text-cyan">
+          <span>BAYESIAN CALIBRATED WEIGHTS</span>
+          <span class="badge badge-success" style="font-size: 9px;">${totalFeedback} FEEDBACK SIGNALS</span>
+        </div>
+        <div class="metric-table-wrap">
+          <div class="metric-row">
+            <span>Grounding Evidence (\(w_{grounding}\))</span>
+            <strong class="text-green">${(weights.w_grounding || 0.30).toFixed(4)}</strong>
+          </div>
+          <div class="metric-row">
+            <span>DAG Plan Determinism (\(w_{plan}\))</span>
+            <strong class="text-green">${(weights.w_plan || 0.25).toFixed(4)}</strong>
+          </div>
+          <div class="metric-row">
+            <span>Multi-Test Verification (\(w_{verification}\))</span>
+            <strong class="text-cyan">${(weights.w_verification || 0.35).toFixed(4)}</strong>
+          </div>
+          <div class="metric-row">
+            <span>Reviewer Model Authority (\(w_{authority}\))</span>
+            <strong>${(weights.w_authority || 0.10).toFixed(4)}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// 1-Click PR Review Feedback Submission
+async function submitPRFeedback(prId, issueId, outcome, confidence = 0.95) {
+  const isApproved = outcome === 'MERGED_AS_IS';
+  const confirmMsg = isApproved
+    ? `Submit human approval for certificate ${prId}? This dynamically calibrates confidence thresholds.`
+    : `Submit rejection for certificate ${prId}? This penalizes future confidence scores.`;
+
+  if (!confirm(confirmMsg)) return;
+
+  const result = await fetchJson('/api/feedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      pr_id: prId,
+      issue_id: issueId,
+      outcome: outcome,
+      confidence: confidence,
+      comments: `Recorded via QuetZ Web Control Console 1-click action (${outcome})`
+    })
+  });
+
+  if (result && result.status === 'RECORDED') {
+    alert(`Feedback recorded: ${outcome}\nUpdated Verification Weight: ${result.updated_weights.w_verification}\nUpdated Grounding Weight: ${result.updated_weights.w_grounding}`);
+    // If metrics panel is open, refresh it
+    const panelMetrics = $('#panel-metrics');
+    if (panelMetrics && !panelMetrics.classList.contains('hidden')) {
+      loadMetrics();
+    }
+  } else {
+    alert('Failed to submit PR review feedback.');
+  }
+}
+window.submitPRFeedback = submitPRFeedback;
 
 // Command Palette (Ctrl+K)
 function setupCommandPalette() {
