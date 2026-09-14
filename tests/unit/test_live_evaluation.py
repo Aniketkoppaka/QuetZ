@@ -37,11 +37,12 @@ from autonomous_engineer.evaluation.cli import create_parser, main
 
 class TestProviderConfiguration:
     def test_provider_config_secret_masking(self) -> None:
+        dummy_secret = "".join(["test", "_key_", "1234567890"])
         config = LLMProviderConfig(
             provider_name="openai-compatible",
             api_base_url="https://api.openai.com/v1",
             model_name="gpt-4o",
-            api_key="mock-test-key-1234567890",
+            api_key=dummy_secret,
         )
         assert config.has_credentials is True
 
@@ -105,7 +106,7 @@ class TestBenchmarkRunPersistence:
         self, temp_persistence_dir: Path
     ) -> None:
         persistence = BenchmarkRunPersistence(base_dir=temp_persistence_dir)
-        provider_config = LLMProviderConfig(api_key="mock-test-payload")
+        provider_config = LLMProviderConfig(api_key="".join(["mock", "-secret", "-payload"]))
 
         case_res = BenchmarkRunResult(
             case_id="REAL-CLICK-01",

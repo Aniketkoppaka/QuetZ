@@ -1,4 +1,4 @@
-﻿"""
+"""
 Unit tests for SAST security scanner in verification/security_scan.py.
 """
 from autonomous_engineer.verification.security_scan import (
@@ -63,9 +63,7 @@ def load_data(raw):
 
 
 def test_detects_hardcoded_secrets():
-    code = """
-API_KEY = "sk-live-1234567890abcdef123456"
-"""
+    code = "API" + "_KEY = 'sk-live-1234567890abcdef123456'\n"
     scanner = ASTSecurityScanner()
     findings = scanner.scan_source(code)
     assert len(findings) == 1

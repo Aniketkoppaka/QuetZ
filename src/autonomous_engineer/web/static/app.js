@@ -27,6 +27,59 @@ async function fetchJson(endpoint, options = {}) {
   }
 }
 
+// In-App Custom Dark Themed UI Modals (Zero native browser alerts)
+function showCustomDialog({ title = 'QUETZ NOTIFICATION', message, isConfirm = false, confirmText = 'CONFIRM', isSuccess = true }) {
+  return new Promise((resolve) => {
+    const modal = $('#ui-alert-modal');
+    const titleEl = $('#ui-modal-title');
+    const dotEl = $('#ui-modal-dot');
+    const msgEl = $('#ui-modal-message');
+    const btnCancel = $('#ui-modal-btn-cancel');
+    const btnConfirm = $('#ui-modal-btn-confirm');
+    const btnX = $('#ui-modal-btn-x');
+
+    if (!modal) {
+      resolve(true);
+      return;
+    }
+
+    titleEl.textContent = title;
+    dotEl.className = isSuccess ? 'dot-green' : 'dot-red';
+    msgEl.textContent = message;
+    btnConfirm.textContent = confirmText;
+
+    if (isConfirm) {
+      btnCancel.style.display = 'inline-block';
+    } else {
+      btnCancel.style.display = 'none';
+    }
+
+    const cleanup = (val) => {
+      modal.classList.add('hidden');
+      btnConfirm.onclick = null;
+      btnCancel.onclick = null;
+      btnX.onclick = null;
+      resolve(val);
+    };
+
+    btnConfirm.onclick = () => cleanup(true);
+    btnCancel.onclick = () => cleanup(false);
+    btnX.onclick = () => cleanup(false);
+
+    modal.classList.remove('hidden');
+  });
+}
+
+function showCustomAlert(message, title = 'QUETZ SYSTEM NOTICE') {
+  return showCustomDialog({ title, message, isConfirm: false, confirmText: 'OK' });
+}
+
+function showCustomConfirm(message, title = 'QUETZ HUMAN VERIFICATION') {
+  return showCustomDialog({ title, message, isConfirm: true, confirmText: 'APPROVE' });
+}
+window.showCustomAlert = showCustomAlert;
+window.showCustomConfirm = showCustomConfirm;
+
 // App Initialization
 async function init() {
   setupNavigation();
@@ -360,7 +413,7 @@ function renderCardHtml(card) {
             <span class="text-green">VERIFICATION ASSURANCE CERTIFICATE</span>
           </div>
           <div class="card-header-right">
-            <button class="btn-card-action" onclick="event.stopPropagation(); navigator.clipboard.writeText('${c.evidence_hash}'); alert('SHA-256 Digest copied to clipboard!');">COPY HASH</button>
+            <button class="btn-card-action" onclick="event.stopPropagation(); navigator.clipboard.writeText('${c.evidence_hash}'); showCustomAlert('SHA-256 Digest copied to clipboard: ' + '${c.evidence_hash}', 'CRYPTOGRAPHIC PROOF COPIED');">COPY HASH</button>
             <span class="card-tag">CRYPTOGRAPHIC PROOF</span>
           </div>
         </div>
@@ -667,9 +720,9 @@ async function loadMetrics() {
 
       <div class="metric-stat-card">
         <div class="metric-stat-label">AVG MUTATION KILL SCORE</div>
-        <div class="metric-stat-value text-green">${((metrics.avg_mutation_score || 0) * 100).toFixed(1)}%</div>
+        <div class="metric-stat-value text-green">${(((metrics.average_mutation_score ?? metrics.avg_mutation_score) || 0) * 100).toFixed(1)}%</div>
         <div class="metric-meter">
-          <div class="metric-meter-fill bg-green" style="width: ${Math.min(100, (metrics.avg_mutation_score || 0) * 100)}%;"></div>
+          <div class="metric-meter-fill bg-green" style="width: ${Math.min(100, (((metrics.average_mutation_score ?? metrics.avg_mutation_score) || 0) * 100))}%;"></div>
         </div>
       </div>
     </div>
@@ -685,7 +738,7 @@ async function loadMetrics() {
           </div>
           <div class="metric-row">
             <span>Average Execution Duration</span>
-            <strong>${(metrics.avg_duration_seconds || 0).toFixed(1)}s</strong>
+            <strong>${(((metrics.average_duration_seconds ?? metrics.avg_duration_seconds) || 0)).toFixed(1)}s</strong>
           </div>
           <div class="metric-row">
             <span>Tier 1 (Exact Anchor) Applied</span>
@@ -734,10 +787,11 @@ async function loadMetrics() {
 async function submitPRFeedback(prId, issueId, outcome, confidence = 0.95) {
   const isApproved = outcome === 'MERGED_AS_IS';
   const confirmMsg = isApproved
-    ? `Submit human approval for certificate ${prId}? This dynamically calibrates confidence thresholds.`
-    : `Submit rejection for certificate ${prId}? This penalizes future confidence scores.`;
+    ? `Submit human approval for certificate ${prId}?\n\nThis dynamically calibrates confidence thresholds and reinforcement weights in your favor.`
+    : `Submit human rejection for certificate ${prId}?\n\nThis penalizes future confidence scores and triggers regression review.`;
 
-  if (!confirm(confirmMsg)) return;
+  const confirmed = await showCustomConfirm(confirmMsg, isApproved ? 'APPROVE PR MERGE' : 'REJECT PATCH');
+  if (!confirmed) return;
 
   const result = await fetchJson('/api/feedback', {
     method: 'POST',
@@ -752,14 +806,17 @@ async function submitPRFeedback(prId, issueId, outcome, confidence = 0.95) {
   });
 
   if (result && result.status === 'RECORDED') {
-    alert(`Feedback recorded: ${outcome}\nUpdated Verification Weight: ${result.updated_weights.w_verification}\nUpdated Grounding Weight: ${result.updated_weights.w_grounding}`);
+    await showCustomAlert(
+      `✓ Human review outcome recorded: ${outcome}\n\n• Calibrated Verification Weight: ${result.updated_weights.w_verification}\n• Calibrated Grounding Weight: ${result.updated_weights.w_grounding}\n• Execution Weight: ${result.updated_weights.w_execution}`,
+      'CALIBRATION COMPLETE'
+    );
     // If metrics panel is open, refresh it
     const panelMetrics = $('#panel-metrics');
     if (panelMetrics && !panelMetrics.classList.contains('hidden')) {
       loadMetrics();
     }
   } else {
-    alert('Failed to submit PR review feedback.');
+    await showCustomAlert('Failed to submit PR review feedback to reinforcement engine.', 'ERROR');
   }
 }
 window.submitPRFeedback = submitPRFeedback;
@@ -795,6 +852,15 @@ function setupCommandPalette() {
     }
   });
 
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const active = results.querySelector('.cmd-item.active') || results.querySelector('.cmd-item');
+      if (active) {
+        active.click();
+      }
+    }
+  });
+
   input.addEventListener('input', () => {
     renderCommandResults(input.value.trim().toLowerCase());
   });
@@ -802,18 +868,32 @@ function setupCommandPalette() {
   function renderCommandResults(filter) {
     results.innerHTML = '';
     const actions = [
-      { label: 'View: Active Chat Thread', action: () => handleNavAction('show-chat'), tag: 'VIEW' },
-      { label: 'View: Indexed Repositories', action: () => handleNavAction('show-repos'), tag: 'VIEW' },
-      { label: 'View: Agent Hierarchy', action: () => handleNavAction('show-agents'), tag: 'VIEW' },
-      { label: 'View: Generated Artifacts', action: () => handleNavAction('show-artifacts'), tag: 'VIEW' },
+      { label: 'View: Active Chat Thread', searchStr: 'thread chat message console active', action: () => handleNavAction('show-chat'), tag: 'VIEW' },
+      { label: 'View: Indexed Repositories', searchStr: 'repos repositories pallets click psf requests django', action: () => handleNavAction('show-repos'), tag: 'VIEW' },
+      { label: 'View: Agent Hierarchy', searchStr: 'agents hierarchy coordinator planner verifier reviewer implementer', action: () => handleNavAction('show-agents'), tag: 'VIEW' },
+      { label: 'View: Generated Artifacts', searchStr: 'artifacts files certificates evidence', action: () => handleNavAction('show-artifacts'), tag: 'VIEW' },
+      { label: 'View: KPI Metrics & Calibrations', searchStr: 'metrics kpi stats confidence mutation weights', action: () => handleNavAction('show-metrics'), tag: 'VIEW' },
       ...state.sessions.map(s => ({
-        label: `Switch Session: ${s.title}`,
+        label: `Switch: ${s.title}`,
+        searchStr: `${s.title} ${s.repo || ''} ${s.session_id || ''}`.toLowerCase(),
         action: () => selectSession(s.session_id),
         tag: 'SESSION'
       }))
     ];
 
-    const filtered = actions.filter(a => a.label.toLowerCase().includes(filter));
+    const filtered = actions.filter(a => {
+      if (!filter) return true;
+      return a.label.toLowerCase().includes(filter) || (a.searchStr && a.searchStr.toLowerCase().includes(filter));
+    });
+
+    if (filtered.length === 0) {
+      const noRes = document.createElement('div');
+      noRes.className = 'cmd-item text-muted';
+      noRes.textContent = `No matching commands or sessions found for "${filter}"`;
+      results.appendChild(noRes);
+      return;
+    }
+
     filtered.forEach((act, idx) => {
       const item = document.createElement('div');
       item.className = `cmd-item ${idx === 0 ? 'active' : ''}`;

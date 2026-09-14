@@ -294,6 +294,26 @@
     </div>
   </div>
 
+  <!-- Custom Alert / Confirm Engineering Modal -->
+  <div class="modal-overlay hidden" id="ui-alert-modal">
+    <div class="modal-dialog modal-dialog-form" style="width: 460px;">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="dot-green" id="ui-modal-dot">■</span>
+          <span class="modal-title" id="ui-modal-title">QUETZ CONFIRMATION</span>
+        </div>
+        <button class="btn-close-modal" id="ui-modal-btn-x">✕</button>
+      </div>
+      <div class="modal-form-body">
+        <div id="ui-modal-message" style="font-size: 12px; line-height: 1.6; color: var(--text-pri); white-space: pre-wrap;"></div>
+        <div class="modal-actions-row" id="ui-modal-actions" style="margin-top: 8px;">
+          <button type="button" class="btn btn-outline" id="ui-modal-btn-cancel">CANCEL</button>
+          <button type="button" class="btn btn-primary" id="ui-modal-btn-confirm">CONFIRM</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Command Palette Modal (Ctrl+K) -->
   <div class="modal-overlay hidden" id="cmd-modal">
     <div class="modal-dialog">

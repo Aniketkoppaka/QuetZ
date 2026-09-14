@@ -875,21 +875,21 @@ class ASEConsoleHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self) -> None:
         """Handle POST requests for creating sessions or appending user chat messages."""
-        # 1. Same-Origin Validation
-        if not self._is_origin_allowed():
-            self._send_error(HTTPStatus.FORBIDDEN, "Cross-Origin request forbidden")
-            return
-
-        parsed_url = urlparse(self.path)
-        path = parsed_url.path
-
-        # 2. Max Payload Size Guard (Anti-DoS)
+        # 1. Max Payload Size Guard (Anti-DoS)
         content_length = int(self.headers.get("Content-Length", 0))
         if content_length > MAX_PAYLOAD_BYTES:
             self._send_error(HTTPStatus.REQUEST_ENTITY_TOO_LARGE, f"Payload exceeds {MAX_PAYLOAD_BYTES} bytes limit")
             return
 
         post_data = self.rfile.read(content_length) if content_length > 0 else b"{}"
+
+        # 2. Same-Origin Validation
+        if not self._is_origin_allowed():
+            self._send_error(HTTPStatus.FORBIDDEN, "Cross-Origin request forbidden")
+            return
+
+        parsed_url = urlparse(self.path)
+        path = parsed_url.path
 
         try:
             payload = json.loads(post_data.decode("utf-8")) if post_data else {}
@@ -994,7 +994,36 @@ class ASEConsoleHandler(SimpleHTTPRequestHandler):
         now_str = datetime.now().strftime("%H:%M:%S")
         lower = user_text.lower()
 
-        if "plan" in lower:
+        if "approve" in lower or "execute" in lower:
+            return {
+                "id": f"msg-{len(session['messages']) + 1}",
+                "sender": "agent",
+                "timestamp": now_str,
+                "text": "DAG Plan Approved: Atomic AST edits applied to target files. Tier-1 exact anchors confirmed with 0 syntax regressions.",
+                "cards": [
+                    {
+                        "type": "anchor_diff",
+                        "data": [
+                            {
+                                "file": f"{session['repo']}/core.py",
+                                "anchor_tier": "TIER 1: EXACT",
+                                "anchor_confidence": 1.0,
+                                "ast_enclosing_symbol": "execute_task(command, context)",
+                                "hunks": [
+                                    "@@ -118,6 +118,10 @@ def execute_task(command, context):",
+                                    "     if not command:",
+                                    "         raise ValueError('Empty command')",
+                                    "+    # Guard against invalid composite parameters",
+                                    "+    if getattr(command, 'composite', False) and not command.subargs:",
+                                    "+        return ()",
+                                    "     return context.run(command)"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        elif "plan" in lower:
             return {
                 "id": f"msg-{len(session['messages']) + 1}",
                 "sender": "agent",
